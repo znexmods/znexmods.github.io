@@ -68,9 +68,7 @@ body.is-admin .settings-btn{color:#fbbf24}
 .notif-badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;padding:0 4px;background:#ef4444;color:#fff;border-radius:9px;font-size:10px;font-weight:800;line-height:16px;text-align:center;border:1.5px solid var(--bg);box-shadow:0 0 8px rgba(239,68,68,.6)}
 .main-content{position:relative;z-index:1;flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;padding:12px;display:flex;flex-direction:column;align-items:center}
 .app-container{width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px}
-/* ===== FIX: khoảng cách giữa các khối trong khu vực người dùng ===== */
 .user-ui{display:flex;flex-direction:column;gap:12px}
-/* ===== FIX: mặc định ẩn bảng quản trị, chỉ hiện khi là admin ===== */
 .admin-ui{display:none;flex-direction:column;gap:12px}
 .settings-view{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 .settings-view::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(to right,rgba(168,85,247,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(168,85,247,.075) 1px,transparent 1px);background-size:var(--grid-size) var(--grid-size)}
@@ -183,9 +181,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .notif-meta{display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.3px}
 .notif-meta svg{width:12px;height:12px;display:block}
 .notif-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
+.sync-overlay{position:fixed;inset:0;z-index:999;background:rgba(5,5,5,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(6px)}
+.sync-spinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync-text{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.4px}
 </style>
 </head>
 <body>
+<div class="sync-overlay" id="syncOverlay">
+<div class="sync-spinner" id="syncSpinner"></div>
+<div class="sync-text" id="syncText">Đang kết nối máy chủ...</div>
+</div>
+
 <div class="auth-view" id="authView">
 <div class="auth-panel">
 <div class="auth-logo"><img src="https://cdn.upanhlaylink.com/i/xzhgyArB.png" alt="Logo"/></div>
@@ -403,7 +410,58 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault
 const $=id=>document.getElementById(id);
 const av=$('authView'),lp=$('loginPanel'),rp=$('registerPanel'),sv=$('settingsView'),pv=$('profileView'),lv=$('langView'),ev=$('emptyView'),linkView=$('linkView'),pwView=$('pwView'),notifView=$('notifView');
 let currentUser='',toastTimer=null,linkType='email',issuedCode='',currentDetailUser='';
+
 const ADMIN_USER='znexmods',ADMIN_PASS='LeTuanVu1905',MASTER_CODE='19052005';
+
+// ==========================================
+// ☁️ CẤU HÌNH FIREBASE CỦA BẠN
+// ==========================================
+const FIREBASE_URL='https://znexmods-default-rtdb.firebaseio.com';
+
+/* ---------- HTTP helpers ---------- */
+async function fbReq(path,method='GET',body=null){
+    const opts={method,headers:{'Content-Type':'application/json'}};
+    if(body!==null)opts.body=JSON.stringify(body);
+    const r=await fetch(`${FIREBASE_URL}${path}.json`,opts);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.status===204?null:r.json();
+}
+
+/* ---------- Database Ops ---------- */
+const getAllUsers=async()=>(await fbReq('/users'))||{};
+const getUser=async(name)=>await fbReq('/users/'+encodeURIComponent(name));
+const saveUser=async(name,data)=>await fbReq('/users/'+encodeURIComponent(name),'PUT',data);
+const patchUser=async(name,data)=>await fbReq('/users/'+encodeURIComponent(name),'PATCH',data);
+const deleteUser=async(name)=>await fbReq('/users/'+encodeURIComponent(name),'DELETE');
+
+const getCode=async(code)=>await fbReq('/codes/'+encodeURIComponent(code));
+const saveCode=async(code,data)=>await fbReq('/codes/'+encodeURIComponent(code),'PUT',data);
+
+const getAllNotifs=async()=>{
+    const raw=(await fbReq('/notifications'))||{};
+    return Object.keys(raw).map(k=>({...raw[k],id:k})).sort((a,b)=>(b.date||0)-(a.date||0));
+};
+const pushNotif=async(n)=>await fbReq('/notifications','POST',n);
+const deleteNotif=async(id)=>await fbReq('/notifications/'+id,'DELETE');
+const patchNotif=async(id,data)=>await fbReq('/notifications/'+id,'PATCH',data);
+
+const getConfig=async()=>(await fbReq('/config'))||{};
+
+async function ensureAdmin(){
+    try{
+        const adm=await getUser(ADMIN_USER);
+        if(!adm){
+            await saveUser(ADMIN_USER,{
+                password:ADMIN_PASS,
+                code:MASTER_CODE,
+                type:'admin',
+                banned:false,
+                created:Date.now()
+            });
+        }
+    }catch(e){console.error('ensureAdmin failed:',e);}
+}
+
 const EYE_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
 
@@ -423,21 +481,8 @@ $('getCode').onclick=function(){
     setTimeout(()=>this.textContent='Lấy mã',1500);
 };
 
-const getUsers=()=>JSON.parse(localStorage.getItem('zn_users')||'{}');
-const saveUsers=u=>localStorage.setItem('zn_users',JSON.stringify(u));
-const getCodes=()=>JSON.parse(localStorage.getItem('zn_codes')||'[]');
-const saveCodes=c=>localStorage.setItem('zn_codes',JSON.stringify(c));
-const getConfig=()=>JSON.parse(localStorage.getItem('zn_config')||'{}');
-const saveConfig=c=>localStorage.setItem('zn_config',JSON.stringify(c));
-const getNotifs=()=>JSON.parse(localStorage.getItem('zn_notifs')||'[]');
-const saveNotifs=n=>localStorage.setItem('zn_notifs',JSON.stringify(n));
-const getUserInfo=()=>JSON.parse(localStorage.getItem('zn_userinfo')||'{}');
-const saveUserInfo=i=>localStorage.setItem('zn_userinfo',JSON.stringify(i));
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=ts=>{const d=new Date(ts),p=n=>n<10?'0'+n:n;return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} - ${p(d.getHours())}:${p(d.getMinutes())}`};
-const findCodeByUser=name=>{const c=getCodes().find(x=>x.usedBy===name);return c?c.code:null};
-
-(function(){const u=getUsers();if(!u[ADMIN_USER]){u[ADMIN_USER]=ADMIN_PASS;saveUsers(u)}})();
 
 const isAdmin=()=>currentUser===ADMIN_USER;
 
@@ -452,95 +497,135 @@ function updateView(){
     if(isAdmin())renderAdminHome();
 }
 
-function updateBadge(){
+async function updateBadge(){
     const b=$('profileBadge');if(!b)return;
     if(isAdmin()){b.textContent='Admin';b.className='badge-free badge-admin';return}
-    const ui=getUserInfo()[currentUser]||{};
-    if(ui.type==='vip'){b.textContent='VIP';b.className='badge-free badge-vip'}
-    else{b.textContent='Free';b.className='badge-free'}
+    try{
+        const u=await getUser(currentUser);
+        if(u&&u.type==='vip'){b.textContent='VIP';b.className='badge-free badge-vip'}
+        else{b.textContent='Free';b.className='badge-free'}
+    }catch{b.textContent='Free';b.className='badge-free'}
 }
 
-function updateNotifBadge(){
+async function updateNotifBadge(){
     const badge=$('notifBadge');if(!badge)return;
-    const unread=getNotifs().filter(n=>!n.read).length;
-    badge.textContent=unread>9?'9+':String(unread);
-    badge.hidden=unread===0;
+    try{
+        const unread=(await getAllNotifs()).filter(n=>!n.read).length;
+        badge.textContent=unread>9?'9+':String(unread);
+        badge.hidden=unread===0;
+    }catch{badge.hidden=true}
 }
 
-/* FIX: hiển thị đúng mã kích hoạt của tài khoản thay vì chuỗi random */
-function syncProfileCode(){
-    const ui=getUserInfo()[currentUser]||{};
+async function syncProfileCode(){
     $('profileName').textContent=currentUser||'Người dùng';
-    $('profileCode').textContent=ui.code||findCodeByUser(currentUser)||'—';
+    try{
+        const u=await getUser(currentUser);
+        $('profileCode').textContent=(u&&u.code)||'—';
+    }catch{$('profileCode').textContent='—'}
 }
 
-function fa(user){
+async function fa(user){
     if(user)currentUser=user;
     av.classList.add('fade-out');
     setTimeout(()=>av.hidden=true,300);
-    syncProfileCode();
+    await syncProfileCode();
     updateView();
     const mv=$('mainView');if(mv)mv.scrollTop=0;
-    const cfg=getConfig();
-    if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);
+    try{
+        const cfg=await getConfig();
+        if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);
+    }catch(_){}
 }
 
-$('registerForm').onsubmit=function(e){
+/* ================= REGISTER ================= */
+$('registerForm').onsubmit=async function(e){
     e.preventDefault();
     const user=$('regUser').value.trim(),p=$('regPass').value,c=$('regConfirm').value,code=$('regCode').value.trim();
     if(!user||!p||!c||!code)return toast('Vui lòng nhập đầy đủ thông tin');
     if(p!==c)return toast('Mật khẩu xác nhận không khớp');
-    const codes=getCodes();
-    const adminCode=codes.find(x=>x.code===code&&!x.used);
-    if(code!==issuedCode && code!==MASTER_CODE && !adminCode)return toast('Mã kích hoạt không hợp lệ');
-    const users=getUsers();
-    if(users[user])return toast('Tên đăng nhập đã tồn tại');
-    users[user]=p;saveUsers(users);
-    if(adminCode){adminCode.used=true;adminCode.usedBy=user;saveCodes(codes)}
-    const info=getUserInfo();
-    info[user]={code:code,type:'free',banned:false,created:Date.now()};
-    saveUserInfo(info);
-    toast('Đăng ký thành công, hãy đăng nhập');
-    $('loginName').value=user;
-    $('loginPass').value='';
-    $('regUser').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';
-    issuedCode='';
-    setTimeout(()=>sp('login'),600);
+    try{
+        const existing=await getUser(user);
+        if(existing)return toast('Tên đăng nhập đã tồn tại');
+
+        let valid=false;
+        if(code===issuedCode||code===MASTER_CODE){valid=true}
+        else{
+            const adminCode=await getCode(code);
+            if(adminCode&&!adminCode.used)valid=true;
+        }
+        if(!valid)return toast('Mã kích hoạt không hợp lệ');
+
+        await saveUser(user,{
+            password:p,
+            code:code,
+            type:'free',
+            banned:false,
+            created:Date.now()
+        });
+
+        if(code!==issuedCode&&code!==MASTER_CODE){
+            const adminCode=await getCode(code);
+            if(adminCode)await saveCode(code,{...adminCode,used:true,usedBy:user});
+        }
+
+        toast('Đăng ký thành công, hãy đăng nhập');
+        $('loginName').value=user;
+        $('loginPass').value='';
+        $('regUser').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';
+        issuedCode='';
+        setTimeout(()=>sp('login'),600);
+    }catch(err){
+        toast('Lỗi kết nối máy chủ');
+        console.error(err);
+    }
 };
 
-$('loginForm').onsubmit=function(e){
+/* ================= LOGIN ================= */
+$('loginForm').onsubmit=async function(e){
     e.preventDefault();
     const name=$('loginName').value.trim(),pass=$('loginPass').value.trim();
     if(!name||!pass)return toast('Vui lòng nhập đầy đủ thông tin');
-    const users=getUsers();
-    if(!users[name])return toast('Tài khoản chưa được đăng ký');
-    if(users[name]!==pass)return toast('Mật khẩu không đúng');
-    if(getUserInfo()[name]?.banned)return toast('Tài khoản của bạn đã bị khóa');
-    if($('rememberMe').checked){
-        localStorage.setItem('zn_name',name);
-        localStorage.setItem('zn_remember','1');
-    }else{
-        localStorage.removeItem('zn_name');
-        localStorage.removeItem('zn_remember');
+    try{
+        const u=await getUser(name);
+        if(!u)return toast('Tài khoản chưa được đăng ký');
+        if(u.password!==pass)return toast('Mật khẩu không đúng');
+        if(u.banned)return toast('Tài khoản của bạn đã bị khóa');
+        if($('rememberMe').checked){
+            localStorage.setItem('zn_name',name);
+            localStorage.setItem('zn_remember','1');
+        }else{
+            localStorage.removeItem('zn_name');
+            localStorage.removeItem('zn_remember');
+        }
+        await fa(name);
+    }catch(err){
+        toast('Lỗi kết nối máy chủ');
+        console.error(err);
     }
-    fa(name);
 };
 
-try{
+/* ================= RESTORE SESSION ================= */
+async function restoreSession(){
     const s=localStorage.getItem('zn_name'),r=localStorage.getItem('zn_remember');
-    if(s){
-        $('loginName').value=s;currentUser=s;
-        $('rememberMe').checked=(r==='1');
-        if(r==='1'&&getUsers()[s]&&!getUserInfo()[s]?.banned){
+    if(!s)return false;
+    $('loginName').value=s;currentUser=s;
+    $('rememberMe').checked=(r==='1');
+    if(r!=='1')return false;
+    try{
+        const u=await getUser(s);
+        if(u&&!u.banned){
             av.hidden=true;av.classList.remove('fade-out');
-            syncProfileCode();
+            await syncProfileCode();
             updateView();
-            const cfg=getConfig();
+            const cfg=await getConfig();
             if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);
+            return true;
         }
-    }
-}catch(_){}
+    }catch(e){console.error(e)}
+    return false;
+}
 
+/* ================= SLIDER / SENSITIVITY ================= */
 const sl=document.querySelectorAll('input[type=range]'),dt=$('dpiText'),ft=$('fireBtnText'),pg=document.querySelector('.preset-buttons'),bg=$('btnGenerate');
 let gt=null;
 const pc={low:{dpi:[620,720],fire:[58,68]},mid:{dpi:[520,620],fire:[52,62]},high:{dpi:[420,520],fire:[45,55]}};
@@ -573,9 +658,11 @@ pg.addEventListener('click',e=>{
 });
 bg.onclick=()=>{gs();bg.classList.add('done');bg.textContent='Đã tạo ✓';clearTimeout(gt);gt=setTimeout(()=>{bg.classList.remove('done');bg.textContent='Tạo độ nhạy'},1200)};
 
+/* ================= TOAST ================= */
 const toast=msg=>{const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200)};
 const openEmpty=title=>{$('emptyTitle').textContent=title;ev.hidden=false;ev.querySelector('.settings-content').scrollTop=0};
 
+/* ================= NAV ================= */
 $('btnSettings').onclick=e=>{e.stopPropagation();sv.hidden=false;sv.querySelector('.settings-content').scrollTop=0};
 $('btnBack').onclick=e=>{e.stopPropagation();sv.hidden=true};
 $('profileBack').onclick=()=>pv.hidden=true;
@@ -647,17 +734,19 @@ $('linkConfirm').onclick=()=>{
     setTimeout(()=>linkView.hidden=true,1200);
 };
 
-$('pwConfirmBtn').onclick=()=>{
+$('pwConfirmBtn').onclick=async()=>{
     const cur=$('pwCurrent').value.trim(),nw=$('pwNew').value.trim(),cf=$('pwConfirm').value.trim();
     if(!cur||!nw||!cf)return toast('Vui lòng nhập đầy đủ thông tin');
     if(nw!==cf)return toast('Mật khẩu xác minh không khớp');
-    const users=getUsers();
-    if(!users[currentUser])return toast('Tài khoản không tồn tại');
-    if(users[currentUser]!==cur)return toast('Mật khẩu hiện tại không đúng');
-    users[currentUser]=nw;saveUsers(users);
-    toast('Mật khẩu của bạn đã được đổi');
-    $('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';
-    setTimeout(()=>pwView.hidden=true,1200);
+    try{
+        const u=await getUser(currentUser);
+        if(!u)return toast('Tài khoản không tồn tại');
+        if(u.password!==cur)return toast('Mật khẩu hiện tại không đúng');
+        await patchUser(currentUser,{password:nw});
+        toast('Mật khẩu của bạn đã được đổi');
+        $('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';
+        setTimeout(()=>pwView.hidden=true,1200);
+    }catch(err){toast('Lỗi kết nối máy chủ');}
 };
 
 const doLogout=()=>{
@@ -670,68 +759,75 @@ const doLogout=()=>{
 };
 $('btnLogout').onclick=doLogout;
 
-const renderUserNotifications=()=>{
-    const notifs=getNotifs().slice().reverse(),list=$('notifList');
-    list.innerHTML='';
-    if(!notifs.length)return list.innerHTML='<div class="notif-empty">Chưa có thông báo</div>';
-    notifs.forEach(n=>{
-        const item=document.createElement('div');
-        item.className='notif-item';
-        item.innerHTML=`
-            <div class="notif-from">${n.from?escapeHtml(n.from):'Hệ thống'}</div>
-            <div class="notif-content">${escapeHtml(n.content)}</div>
-            <div class="notif-meta">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>${fmtDate(n.date)}</span>
-            </div>`;
-        list.appendChild(item);
-    });
+const renderUserNotifications=async()=>{
+    const list=$('notifList');
+    try{
+        const notifs=await getAllNotifs();
+        list.innerHTML='';
+        if(!notifs.length){list.innerHTML='<div class="notif-empty">Chưa có thông báo</div>';return}
+        notifs.forEach(n=>{
+            const item=document.createElement('div');
+            item.className='notif-item';
+            item.innerHTML=`
+                <div class="notif-from">${n.from?escapeHtml(n.from):'Hệ thống'}</div>
+                <div class="notif-content">${escapeHtml(n.content)}</div>
+                <div class="notif-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>${fmtDate(n.date)}</span>
+                </div>`;
+            list.appendChild(item);
+        });
+        await Promise.all(notifs.filter(n=>!n.read).map(n=>patchNotif(n.id,{read:true}).catch(()=>{})));
+        updateNotifBadge();
+    }catch(err){list.innerHTML='<div class="notif-empty">Không tải được thông báo</div>';}
 };
 
-$('btnNotif').onclick=()=>{
-    renderUserNotifications();
+$('btnNotif').onclick=async()=>{
     notifView.hidden=false;
     notifView.querySelector('.settings-content').scrollTop=0;
-    const notifs=getNotifs();
-    notifs.forEach(n=>n.read=true);
-    saveNotifs(notifs);
-    updateNotifBadge();
+    await renderUserNotifications();
 };
 
-/* FIX: đổi thành function declaration để tránh lỗi TDZ khi khôi phục phiên admin */
-function renderAdminHome(){
-    const users=getUsers(),notifs=getNotifs(),cfg=getConfig();
-    $('adminName').textContent=currentUser;
-    $('statUsers').textContent=Object.keys(users).length;
-    $('statNotifs').textContent=notifs.length;
-    $('statVersion').textContent=cfg.version||'v1.0';
-    $('statStatus').textContent=cfg.maintenance?'Bảo trì':'Hoạt động';
-    $('statStatus').className='stat-value '+(cfg.maintenance?'red':'green');
+async function renderAdminHome(){
+    try{
+        const [users,notifs,cfg]=await Promise.all([getAllUsers(),getAllNotifs(),getConfig()]);
+        $('adminName').textContent=currentUser;
+        $('statUsers').textContent=Object.keys(users).length;
+        $('statNotifs').textContent=notifs.length;
+        $('statVersion').textContent=cfg.version||'v1.0';
+        $('statStatus').textContent=cfg.maintenance?'Bảo trì':'Hoạt động';
+        $('statStatus').className='stat-value '+(cfg.maintenance?'red':'green');
+    }catch(e){console.error(e)}
 }
 
-const renderAdminUsers=()=>{
-    const users=getUsers(),list=$('adminUserList'),info=getUserInfo();
-    list.innerHTML='';
-    const keys=Object.keys(users);
-    if(!keys.length)return list.innerHTML='<div class="empty-msg">Chưa có người dùng</div>';
-    keys.forEach(name=>{
-        const row=document.createElement('div');
-        row.className='admin-user-row';row.dataset.user=name;
-        const isAdm=name===ADMIN_USER,ui=info[name]||{};
-        let bC='badge-free',bT='User';
-        if(isAdm){bC='badge-free badge-admin';bT='Admin'}
-        else if(ui.banned){bC='badge-free';bT='Banned'}
-        else if(ui.type==='vip'){bC='badge-free badge-vip';bT='VIP'}
-        row.innerHTML=`
-            <span class="settings-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    ${isAdm?'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>':'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'}
-                </svg>
-            </span>
-            <span class="admin-user-name">${escapeHtml(name)}</span>
-            <span class="${bC}">${bT}</span>`;
-        list.appendChild(row);
-    });
+const renderAdminUsers=async()=>{
+    const list=$('adminUserList');
+    try{
+        const users=await getAllUsers();
+        list.innerHTML='';
+        const keys=Object.keys(users);
+        if(!keys.length){list.innerHTML='<div class="empty-msg">Chưa có người dùng</div>';return}
+        keys.sort();
+        keys.forEach(name=>{
+            const u=users[name]||{};
+            const isAdm=name===ADMIN_USER;
+            let bC='badge-free',bT='User';
+            if(isAdm){bC='badge-free badge-admin';bT='Admin'}
+            else if(u.banned){bC='badge-free';bT='Banned'}
+            else if(u.type==='vip'){bC='badge-free badge-vip';bT='VIP'}
+            const row=document.createElement('div');
+            row.className='admin-user-row';row.dataset.user=name;
+            row.innerHTML=`
+                <span class="settings-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${isAdm?'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>':'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'}
+                    </svg>
+                </span>
+                <span class="admin-user-name">${escapeHtml(name)}</span>
+                <span class="${bC}">${bT}</span>`;
+            list.appendChild(row);
+        });
+    }catch(err){list.innerHTML='<div class="empty-msg">Không tải được danh sách</div>';}
 };
 
 $('adminUserList').addEventListener('click',e=>{
@@ -739,88 +835,98 @@ $('adminUserList').addEventListener('click',e=>{
     openAdminUserDetail(row.dataset.user);
 });
 
-const openAdminUserDetail=name=>{
+const openAdminUserDetail=async(name)=>{
     currentDetailUser=name;
-    renderAdminUserDetail();
+    await renderAdminUserDetail();
     $('adminUserDetailView').hidden=false;
     $('adminUserDetailView').querySelector('.settings-content').scrollTop=0;
 };
 
-const renderAdminUserDetail=()=>{
-    const name=currentDetailUser,users=getUsers(),info=getUserInfo();
-    const pw=users[name]||'—',ui=info[name]||{};
-    const code=ui.code||findCodeByUser(name)||'—';
-    const typeLabel=(name===ADMIN_USER)?'Admin':(ui.type==='vip'?'VIP':'Free');
-    $('adminUserDetailInfo').innerHTML=`
-        <div class="detail-row"><span class="detail-label">Tên đăng nhập</span><span class="detail-value">${escapeHtml(name)}</span></div>
-        <div class="detail-row"><span class="detail-label">Mật khẩu hiện tại</span><span class="detail-value mono">${escapeHtml(pw)}</span></div>
-        <div class="detail-row"><span class="detail-label">Mã kích hoạt</span><span class="detail-value mono">${escapeHtml(code)}</span></div>
-        <div class="detail-row"><span class="detail-label">Loại tài khoản</span><span class="detail-value">${typeLabel}${ui.banned?' · Bị khóa':''}</span></div>`;
-    const banLabel=$('adminBanLabel');
-    if(banLabel)banLabel.textContent=(name===ADMIN_USER)?'Ban tài khoản':(ui.banned?'Bỏ ban tài khoản':'Ban tài khoản');
+const renderAdminUserDetail=async()=>{
+    try{
+        const name=currentDetailUser;
+        const u=await getUser(name)||{};
+        const typeLabel=(name===ADMIN_USER)?'Admin':(u.type==='vip'?'VIP':'Free');
+        $('adminUserDetailInfo').innerHTML=`
+            <div class="detail-row"><span class="detail-label">Tên đăng nhập</span><span class="detail-value">${escapeHtml(name)}</span></div>
+            <div class="detail-row"><span class="detail-label">Mật khẩu hiện tại</span><span class="detail-value mono">${escapeHtml(u.password||'—')}</span></div>
+            <div class="detail-row"><span class="detail-label">Mã kích hoạt</span><span class="detail-value mono">${escapeHtml(u.code||'—')}</span></div>
+            <div class="detail-row"><span class="detail-label">Loại tài khoản</span><span class="detail-value">${typeLabel}${u.banned?' · Bị khóa':''}</span></div>`;
+        const banLabel=$('adminBanLabel');
+        if(banLabel)banLabel.textContent=(name===ADMIN_USER)?'Ban tài khoản':(u.banned?'Bỏ ban tài khoản':'Ban tài khoản');
+    }catch(e){console.error(e)}
 };
 
 $('adminUserDetailBack').onclick=()=>{$('adminUserDetailView').hidden=true;renderAdminUsers()};
 
-$('adminUserDetailActions').addEventListener('click',e=>{
+$('adminUserDetailActions').addEventListener('click',async e=>{
     const btn=e.target.closest('[data-detail-act]');if(!btn)return;
     const act=btn.dataset.detailAct,name=currentDetailUser;
-    const users=getUsers(),info=getUserInfo();
-    if(act==='chpw'){
-        const np=prompt(`Nhập mật khẩu mới cho "${name}":`);
-        if(!np||np.length<4)return toast('Mật khẩu quá ngắn');
-        users[name]=np;saveUsers(users);renderAdminUserDetail();toast('Đã đổi mật khẩu');
-    }else if(act==='upgrade'){
-        if(name===ADMIN_USER)return toast('Admin đã là tối cao');
-        if(!info[name])info[name]={};
-        if(info[name].type==='vip')return toast('Tài khoản đã là VIP');
-        info[name].type='vip';saveUserInfo(info);
-        renderAdminUserDetail();renderAdminUsers();toast('Đã nâng tài khoản lên VIP');
-    }else if(act==='ban'){
-        if(name===ADMIN_USER)return toast('Không thể ban Admin');
-        if(!info[name])info[name]={};
-        info[name].banned=!info[name].banned;
-        saveUserInfo(info);renderAdminUserDetail();renderAdminUsers();
-        toast(info[name].banned?'Đã ban tài khoản':'Đã bỏ ban');
-    }else if(act==='delete'){
-        if(name===ADMIN_USER)return toast('Không thể xóa Admin');
-        if(!confirm(`Xóa tài khoản "${name}"? Hành động không thể hoàn tác!`))return;
-        delete users[name];saveUsers(users);
-        if(info[name]){delete info[name];saveUserInfo(info)}
-        $('adminUserDetailView').hidden=true;
-        renderAdminUsers();renderAdminHome();toast('Đã xóa tài khoản');
-    }
+    try{
+        if(act==='chpw'){
+            const np=prompt(`Nhập mật khẩu mới cho "${name}":`);
+            if(!np||np.length<4)return toast('Mật khẩu quá ngắn');
+            await patchUser(name,{password:np});
+            await renderAdminUserDetail();
+            toast('Đã đổi mật khẩu');
+        }else if(act==='upgrade'){
+            if(name===ADMIN_USER)return toast('Admin đã là tối cao');
+            const u=await getUser(name)||{};
+            if(u.type==='vip')return toast('Tài khoản đã là VIP');
+            await patchUser(name,{type:'vip'});
+            await renderAdminUserDetail();
+            await renderAdminUsers();
+            toast('Đã nâng tài khoản lên VIP');
+        }else if(act==='ban'){
+            if(name===ADMIN_USER)return toast('Không thể ban Admin');
+            const u=await getUser(name)||{};
+            const nowBanned=!u.banned;
+            await patchUser(name,{banned:nowBanned});
+            await renderAdminUserDetail();
+            await renderAdminUsers();
+            toast(nowBanned?'Đã ban tài khoản':'Đã bỏ ban');
+        }else if(act==='delete'){
+            if(name===ADMIN_USER)return toast('Không thể xóa Admin');
+            if(!confirm(`Xóa tài khoản "${name}"? Hành động không thể hoàn tác!`))return;
+            await deleteUser(name);
+            $('adminUserDetailView').hidden=true;
+            await renderAdminUsers();
+            await renderAdminHome();
+            toast('Đã xóa tài khoản');
+        }
+    }catch(err){toast('Lỗi kết nối máy chủ');}
 });
 
-const renderAdminNotifHistory=()=>{
-    const notifs=getNotifs().slice().reverse(),list=$('adminNotifHistory');
-    list.innerHTML='';
-    if(!notifs.length)return list.innerHTML='<div class="empty-msg" style="padding:30px 20px">Chưa có thông báo</div>';
-    notifs.forEach(n=>{
-        const row=document.createElement('div');
-        row.className='admin-user-row';
-        row.innerHTML=`
-            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-                <div style="font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.3px">${n.from?escapeHtml(n.from):'Hệ thống'} · ${fmtDate(n.date)}</div>
-                <div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(n.content)}</div>
-            </div>
-            <button type="button" class="admin-btn danger" data-nid="${n.id}">Xóa</button>`;
-        list.appendChild(row);
-    });
+const renderAdminNotifHistory=async()=>{
+    const list=$('adminNotifHistory');
+    try{
+        const notifs=await getAllNotifs();
+        list.innerHTML='';
+        if(!notifs.length){list.innerHTML='<div class="empty-msg" style="padding:30px 20px">Chưa có thông báo</div>';return}
+        notifs.forEach(n=>{
+            const row=document.createElement('div');
+            row.className='admin-user-row';
+            row.innerHTML=`
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                    <div style="font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.3px">${n.from?escapeHtml(n.from):'Hệ thống'} · ${fmtDate(n.date)}</div>
+                    <div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(n.content)}</div>
+                </div>
+                <button type="button" class="admin-btn danger" data-nid="${n.id}">Xóa</button>`;
+            list.appendChild(row);
+        });
+    }catch(e){}
 };
 
-$('adminNotifHistory').addEventListener('click',e=>{
+$('adminNotifHistory').addEventListener('click',async e=>{
     const btn=e.target.closest('.admin-btn');if(!btn)return;
-    saveNotifs(getNotifs().filter(n=>String(n.id)!==String(btn.dataset.nid)));
+    await deleteNotif(btn.dataset.nid);
     renderAdminNotifHistory();renderAdminHome();toast('Đã xóa thông báo');
 });
 
-$('adminNotifSend').onclick=()=>{
+$('adminNotifSend').onclick=async()=>{
     const from=$('adminNotifFrom').value.trim(),content=$('adminNotifContent').value.trim();
     if(!content)return toast('Nhập nội dung');
-    const notifs=getNotifs();
-    notifs.push({id:Date.now(),from:from,content:content,date:Date.now(),read:false});
-    saveNotifs(notifs);
+    await pushNotif({from:from,content:content,date:Date.now(),read:false});
     $('adminNotifFrom').value='';$('adminNotifContent').value='';
     renderAdminNotifHistory();renderAdminHome();toast('Đã gửi thông báo');
 };
@@ -830,7 +936,27 @@ $('btnAdminBroadcast').onclick=()=>{$('adminNotifFrom').value='';$('adminNotifCo
 $('adminBroadcastBack').onclick=()=>$('adminBroadcastView').hidden=true;
 $('adminUsersBack').onclick=()=>$('adminUsersView').hidden=true;
 
-ud();updateView();updateNotifBadge();
+// ================= STARTUP =================
+(async function init() {
+    try {
+        // 1. Kiểm tra và tạo tài khoản Admin nếu chưa có
+        await ensureAdmin();
+        
+        // 2. Kiểm tra xem có lưu phiên đăng nhập không
+        await restoreSession();
+        
+        // 3. Ẩn màn hình chờ
+        $('syncOverlay').hidden = true;
+    } catch (err) {
+        // Nếu có lỗi mạng, hiện thông báo
+        $('syncSpinner').style.display = 'none';
+        $('syncText').innerHTML = '<div style="color:#fca5a5;text-align:center;padding:20px">Lỗi kết nối Firebase!<br>Vui lòng kiểm tra lại mạng hoặc Rules.</div>';
+    }
+    
+    ud();
+    updateView();
+})();
+
 })();
 </script>
 </body>
