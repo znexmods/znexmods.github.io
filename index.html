@@ -12,11 +12,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#050505;--border:#27272a;--text:#fff;--muted:#a1a1aa;--accent:#a855f7;--accent-2:#7c3aed;--accent-dark:#1c0f2b;--panel:#0c0c0e;--track:#27272a;--radius:12px;--topbar-h:58px;--footer-h:118px;--grid-size:40px}
+/* Lưu ý đặc biệt: Không thêm code chú thích hay giải thích, làm gọn code và tối ưu (không được loại bỏ dòng code này)*/
+:root{--bg:#050505;--border:#27272a;--text:#fff;--muted:#a1a1aa;--accent:#a855f7;--accent-2:#7c3aed;--accent-dark:#1c0f2b;--panel:#0c0c0e;--track:#27272a;--radius:12px;--topbar-h:58px;--footer-h:118px;--grid-size:40px;--ease:cubic-bezier(.22,1,.36,1)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);position:fixed;inset:0;height:100%;width:100%;overflow:hidden;overscroll-behavior:none;display:flex;flex-direction:column;padding-top:calc(var(--topbar-h) + env(safe-area-inset-top));padding-bottom:calc(var(--footer-h) + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased;user-select:none;touch-action:manipulation}
+body.loading .top-bar,body.loading .main-content,body.loading .footer-bar,body.loading .auth-view,body.loading .settings-view{visibility:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(to right,rgba(168,85,247,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(168,85,247,.075) 1px,transparent 1px);background-size:var(--grid-size) var(--grid-size)}
 body.is-admin{--accent:#fbbf24;--accent-2:#f59e0b;--accent-dark:#2a1f0a;padding-bottom:env(safe-area-inset-bottom)}
 body.is-admin::before{background-image:linear-gradient(to right,rgba(251,191,36,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(251,191,36,.075) 1px,transparent 1px)}
@@ -24,58 +26,61 @@ body.is-admin .footer-bar,body.is-admin .user-ui,body.is-admin .notif-btn{displa
 body.is-admin .admin-ui{display:flex}
 body.is-admin .brand-center{background:linear-gradient(135deg,#fff,#fbbf24);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 body.is-admin .settings-btn{color:#fbbf24}
-.auth-view{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:20px;padding-top:calc(20px + env(safe-area-inset-top));padding-bottom:calc(20px + env(safe-area-inset-bottom));overflow-y:auto;transition:opacity .3s}
+.auth-view{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:20px;padding-top:calc(20px + env(safe-area-inset-top));padding-bottom:calc(20px + env(safe-area-inset-bottom));overflow-y:auto;transition:opacity .35s ease}
 .auth-view::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(to right,rgba(168,85,247,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(168,85,247,.075) 1px,transparent 1px);background-size:var(--grid-size) var(--grid-size)}
 .auth-view::-webkit-scrollbar,.main-content::-webkit-scrollbar,.settings-content::-webkit-scrollbar{display:none}
 .auth-view.fade-out{opacity:0;pointer-events:none}
-.auth-panel{width:100%;max-width:380px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 20px;background:var(--panel);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-.auth-logo{width:62px;height:62px;border-radius:16px;overflow:hidden;background:var(--bg);border:1px solid var(--border);box-shadow:0 10px 30px rgba(168,85,247,.35);flex:0 0 auto}
+.auth-panel{width:100%;max-width:360px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:24px;padding:32px 24px;background:rgba(14,14,17,.85);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.55);backdrop-filter:blur(12px)}
+.auth-logo{width:48px;height:48px;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.35);flex:0 0 auto;margin-bottom:-4px}
 .auth-logo img{width:100%;height:100%;object-fit:cover;display:block}
-.auth-body{width:100%;display:flex;flex-direction:column;gap:16px}
-.auth-title{text-align:center;font-size:21px;font-weight:800;letter-spacing:-.3px;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.auth-form{display:flex;flex-direction:column;gap:12px;width:100%}
+.auth-body{width:100%;display:flex;flex-direction:column;gap:20px}
+.auth-title{text-align:center;font-size:22px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#fff,#d8b4fe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.auth-form{display:flex;flex-direction:column;gap:14px;width:100%}
 .field{position:relative;width:100%}
-.field input,.field textarea{width:100%;padding:14px 16px;background:#121014;border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:14px;font-weight:500;outline:none;transition:border-color .2s,background-color .2s}
+.field input,.field textarea,.field select{width:100%;padding:14px 16px;background:#09090b;border:1px solid #27272a;border-radius:12px;color:var(--text);font-family:inherit;font-size:14px;font-weight:500;outline:none;transition:border-color .22s ease,background-color .22s ease,box-shadow .22s ease}
+.field select{appearance:none;-webkit-appearance:none}
 .field textarea{resize:vertical;min-height:90px}
-.field input:focus,.field textarea:focus{border-color:var(--accent);background:#161118}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:#111;box-shadow:0 0 0 3px rgba(168,85,247,.12)}
 .field input::placeholder,.field textarea::placeholder{color:var(--muted);font-weight:500}
 .field.with-icon input{padding-right:52px}
 .field.with-btn input{padding-right:96px}
-.field-icon{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;background:transparent;border:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px}
-.field-icon:active{color:var(--accent)}
-.field-icon svg{width:18px;height:18px;display:block}
-.code-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:36px;padding:0 14px;background:var(--accent-dark);border:1px solid var(--accent);color:var(--accent);border-radius:9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.code-btn:active{background:var(--accent);color:#fff}
-.checkbox-row{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;user-select:none}
+.field-icon{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;background:transparent;border:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:color .22s ease,transform .18s var(--ease)}
+.field-icon:active{color:var(--accent);transform:translateY(-50%) scale(.9)}
+.field-icon svg{width:20px;height:20px;display:block}
+.code-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:34px;padding:0 14px;background:var(--accent-dark);border:1px solid var(--accent);color:var(--accent);border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background-color .22s ease,color .22s ease,border-color .22s ease,transform .18s var(--ease);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.code-btn:active{background:var(--accent);color:#fff;transform:translateY(-50%) scale(.95)}
+.checkbox-row{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;user-select:none;margin-top:2px}
 .checkbox-row input{position:absolute;opacity:0;pointer-events:none}
-.cb-box{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;transition:background-color .2s,border-color .2s;flex:0 0 auto}
-.cb-box svg{width:12px;height:12px;color:#fff;opacity:0;transition:opacity .15s;display:block}
+.cb-box{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;transition:all .22s ease;flex:0 0 auto;background:#09090b}
+.cb-box svg{width:12px;height:12px;color:#fff;opacity:0;transition:opacity .18s ease;display:block}
 .checkbox-row input:checked+.cb-box{background:var(--accent);border-color:var(--accent)}
 .checkbox-row input:checked+.cb-box svg{opacity:1}
-.auth-submit{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;transition:transform .1s,opacity .15s;margin-top:4px}
-.auth-submit:active{transform:scale(.985);opacity:.9}
+.auth-submit{width:100%;padding:15px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:transform .18s var(--ease),opacity .2s ease;margin-top:6px}
+.auth-submit:active{transform:scale(.97);opacity:.92}
 .auth-alt{text-align:center;font-size:13px;color:var(--muted)}
-.link-btn{background:none;border:none;color:var(--accent);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0 2px}
+.link-btn{background:none;border:none;color:var(--accent);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0 4px;transition:opacity .2s ease}
+.link-btn:active{opacity:.6}
 .top-bar{position:fixed;top:0;left:0;width:100%;height:calc(var(--topbar-h) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--bg);border-bottom:1px solid var(--border);z-index:100;display:flex;align-items:center;justify-content:center}
 .brand-center{font-weight:900;font-size:19px;letter-spacing:4px;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.settings-btn{position:absolute;right:12px;top:calc(env(safe-area-inset-top) + var(--topbar-h)/2);transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:0;border-radius:50%;transition:color .2s,transform .12s,background-color .15s}
-.settings-btn svg{width:24px;height:24px;display:block;transition:transform .35s}
+.settings-btn{position:absolute;right:12px;top:calc(env(safe-area-inset-top) + var(--topbar-h)/2);transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:0;border-radius:50%;transition:color .22s ease,transform .22s var(--ease),background-color .22s ease}
+.settings-btn svg{width:24px;height:24px;display:block;transition:transform .35s var(--ease)}
 .settings-btn:active{color:var(--accent);background:rgba(168,85,247,.12);transform:translateY(-50%) scale(.92)}
 .settings-btn:active svg{transform:rotate(60deg)}
-.notif-btn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + var(--topbar-h)/2);transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:0;border-radius:50%;transition:color .2s,transform .12s,background-color .15s}
+.notif-btn{position:absolute;left:12px;top:calc(env(safe-area-inset-top) + var(--topbar-h)/2);transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:0;border-radius:50%;transition:color .22s ease,transform .22s var(--ease),background-color .22s ease}
 .notif-btn svg{width:24px;height:24px;display:block}
 .notif-btn:active{color:var(--accent);background:rgba(168,85,247,.12);transform:translateY(-50%) scale(.92)}
-.notif-badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;padding:0 4px;background:#ef4444;color:#fff;border-radius:9px;font-size:10px;font-weight:800;line-height:16px;text-align:center;border:1.5px solid var(--bg);box-shadow:0 0 8px rgba(239,68,68,.6)}
+.notif-badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;padding:0 4px;background:#ef4444;color:#fff;border-radius:9px;font-size:10px;font-weight:800;line-height:16px;text-align:center;border:1.5px solid var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .main-content{position:relative;z-index:1;flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;padding:12px;display:flex;flex-direction:column;align-items:center}
 .app-container{width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px}
 .user-ui{display:flex;flex-direction:column;gap:12px}
 .admin-ui{display:none;flex-direction:column;gap:12px}
-.settings-view{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+.settings-view{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);animation:slideIn .28s var(--ease)}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
 .settings-view::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(to right,rgba(168,85,247,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(168,85,247,.075) 1px,transparent 1px);background-size:var(--grid-size) var(--grid-size)}
 body.is-admin .settings-view::before{background-image:linear-gradient(to right,rgba(251,191,36,.075) 1px,transparent 1px),linear-gradient(to bottom,rgba(251,191,36,.075) 1px,transparent 1px)}
 .settings-topbar{position:relative;z-index:1;height:var(--topbar-h);display:flex;align-items:center;padding:0 6px;border-bottom:1px solid var(--border);background:var(--bg);gap:6px}
-.back-btn{width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--text);cursor:pointer;border-radius:50%;transition:background-color .15s,color .15s}
-.back-btn:active{background:rgba(168,85,247,.15);color:var(--accent)}
+.back-btn{width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--text);cursor:pointer;border-radius:50%;transition:background-color .22s ease,color .22s ease,transform .18s var(--ease)}
+.back-btn:active{background:rgba(168,85,247,.15);color:var(--accent);transform:scale(.92)}
 .back-btn svg{width:22px;height:22px;display:block}
 .settings-title{font-weight:700;font-size:16px;letter-spacing:.3px}
 .settings-content{position:relative;z-index:1;flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 14px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
@@ -84,9 +89,9 @@ body.is-admin .settings-view::before{background-image:linear-gradient(to right,r
 .settings-group-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .settings-group-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px}
 .settings-group{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
-.settings-item{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .15s}
+.settings-item{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .22s ease,transform .18s var(--ease)}
 .settings-item+.settings-item{border-top:1px solid var(--border)}
-.settings-item:active{background:rgba(168,85,247,.1)}
+.settings-item:active{background:rgba(168,85,247,.1);transform:scale(.985)}
 .settings-icon{flex:0 0 auto;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:var(--accent-dark);color:var(--accent)}
 .settings-icon svg{width:18px;height:18px;display:block}
 .settings-label{flex:1 1 auto;min-width:0}
@@ -100,35 +105,40 @@ body.is-admin .settings-view::before{background-image:linear-gradient(to right,r
 .profile-row+.profile-row{border-top:1px solid var(--border)}
 .profile-label{flex:1 1 auto;font-size:14px;font-weight:500;min-width:0}
 .profile-value{font-size:13px;color:var(--muted);font-weight:600;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+#profileCode{cursor:pointer;transition:color .2s ease}
+#profileCode:active{color:var(--accent)}
 .badge-free{flex:0 0 auto;padding:2px 8px;border-radius:6px;background:var(--accent-dark);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.5px}
 .badge-admin{background:#422006;color:#fbbf24;border:1px solid #78350f}
 .badge-vip{background:#172554;color:#60a5fa;border:1px solid #1e40af}
-.profile-add{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--accent-dark);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background-color .15s,color .15s}
-.profile-add:active{background:var(--accent);color:#fff}
+.profile-add{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--accent-dark);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background-color .22s ease,color .22s ease,transform .18s var(--ease)}
+.profile-add:active{background:var(--accent);color:#fff;transform:scale(.95)}
 .profile-add svg{width:12px;height:12px;display:block}
 .settings-footer{position:fixed;left:0;bottom:0;width:100%;z-index:20;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:8px}
-.btn-logout{width:100%;max-width:440px;padding:14px;border:none;border-radius:var(--radius);background:#dc2626;color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;letter-spacing:.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background-color .15s,transform .1s}
-.btn-logout:active{background:#b91c1c;transform:scale(.985)}
+.btn-logout{width:100%;max-width:440px;padding:14px;border:none;border-radius:var(--radius);background:#dc2626;color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;letter-spacing:.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background-color .22s ease,transform .18s var(--ease)}
+.btn-logout:active{background:#b91c1c;transform:scale(.97)}
 .btn-logout svg{width:18px;height:18px;display:block}
 .version{font-size:11px;color:var(--muted);text-align:center;letter-spacing:.3px}
 .empty-msg{text-align:center;color:var(--muted);padding:80px 20px;font-size:14px}
-.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#18181b;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:600;max-width:90%;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#18181b;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .28s ease,transform .28s var(--ease);z-index:600;max-width:90%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .tabs{display:flex;background:var(--panel);border-radius:var(--radius);padding:3px;border:1px solid var(--border)}
-.tab{flex:1;padding:10px 0;background:transparent;border:none;color:var(--muted);font-size:13px;font-weight:600;border-radius:9px;cursor:pointer;transition:background-color .2s,color .2s}
+.tab{flex:1;padding:10px 0;background:transparent;border:none;color:var(--muted);font-size:13px;font-weight:600;border-radius:9px;cursor:pointer;transition:background-color .22s ease,color .22s ease}
 .tab.active{background:var(--accent-dark);color:var(--accent)}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:11px}
 .slider-group{display:flex;flex-direction:column;gap:5px}
 .slider-header{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500}
-.slider-value{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;font-size:12px;padding:1px 7px;background:var(--accent-dark);border-radius:5px;min-width:34px;text-align:center;transition:background-color .15s,color .15s}
-.slider-value.flash,.dpi-text.flash,.radio-group span.flash{animation:flashPulse .45s ease}
-@keyframes flashPulse{0%{background:var(--accent);color:#fff}100%{background:var(--accent-dark);color:var(--accent)}}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;outline:none;margin:0;cursor:pointer;--p:0%}
+.slider-value{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;font-size:12px;padding:1px 7px;background:var(--accent-dark);border-radius:5px;min-width:34px;text-align:center;transition:background-color .2s ease,color .2s ease}
+.slider-value.flash,.dpi-text.flash,.radio-group span.flash{animation:flashPulse .6s ease-out}
+@keyframes flashPulse{0%{background:var(--accent-dark);color:var(--accent);opacity:.5}40%{opacity:1}100%{background:var(--accent-dark);color:var(--accent);opacity:1}}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;outline:none;margin:0;cursor:not-allowed;--p:0%}
 input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(to right,var(--accent) var(--p),var(--track) var(--p))}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:none;margin-top:-5.5px}
 input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--track)}
 input[type=range]::-moz-range-progress{height:5px;border-radius:3px;background:var(--accent)}
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:none}
+input[type=range]:disabled{opacity:.7}
+input[type=range]:disabled::-webkit-slider-thumb{background:#a1a1aa}
+input[type=range]:disabled::-moz-range-thumb{background:#a1a1aa}
 .divider{height:1px;background:var(--border)}
 .panel-footer{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:500;color:var(--muted)}
 .radio-group{display:flex;align-items:center;gap:8px;color:var(--text)}
@@ -139,13 +149,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .section-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
 .section-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px}
 .preset-buttons{display:flex;gap:8px}
-.preset-btn{flex:1;padding:12px 0;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
-.preset-btn:active{opacity:.85}
+.preset-btn{flex:1;padding:12px 0;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:background-color .22s ease,border-color .22s ease,color .22s ease,transform .18s var(--ease)}
+.preset-btn:active{transform:scale(.97)}
 .preset-btn.active{background:var(--accent-dark);border-color:var(--accent);color:var(--accent)}
 .footer-bar{position:fixed;left:0;bottom:0;width:100%;z-index:100;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:8px}
 .footer-inner{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
-.btn-generate{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;transition:transform .1s,opacity .15s}
-.btn-generate:active{transform:scale(.985);opacity:.88}
+.btn-generate{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;transition:transform .18s var(--ease),background-color .22s ease,color .22s ease,border-color .22s ease}
+.btn-generate:active{transform:scale(.97)}
 .btn-generate.done{background:var(--accent-dark);color:var(--accent);border:1px solid var(--accent)}
 .note{display:flex;gap:7px;align-items:center;justify-content:center;padding:0 2px;font-size:11.5px;line-height:1.45;color:var(--muted);text-align:center}
 .admin-header{display:flex;align-items:center;gap:12px;padding:16px;background:linear-gradient(135deg,#2a1f0a,#0c0c0e);border:1px solid #78350f;border-radius:var(--radius)}
@@ -160,14 +170,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .stat-value{font-size:22px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums}
 .stat-value.green{color:#22c55e}
 .stat-value.red{color:#ef4444}
-.admin-btn{flex:0 0 auto;padding:6px 11px;border:1px solid var(--border);background:transparent;color:var(--text);border-radius:7px;font-family:inherit;font-size:11.5px;font-weight:800;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s;letter-spacing:.3px}
-.admin-btn:active{opacity:.85}
+.admin-btn{flex:0 0 auto;padding:6px 11px;border:1px solid var(--border);background:transparent;color:var(--text);border-radius:7px;font-family:inherit;font-size:11.5px;font-weight:800;cursor:pointer;transition:background-color .22s ease,color .22s ease,border-color .22s ease,transform .18s var(--ease);letter-spacing:.3px}
+.admin-btn:active{transform:scale(.95)}
 .admin-btn.danger{color:#ef4444;border-color:#7f1d1d}
 .admin-btn.danger:active{background:#7f1d1d;color:#fff}
 .admin-user-name{font-size:13px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.admin-user-row{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer}
+.admin-user-row{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;transition:background-color .22s ease,transform .18s var(--ease)}
 .admin-user-row+.admin-user-row{border-top:1px solid var(--border)}
-.admin-user-row:active{background:rgba(251,191,36,.06)}
+.admin-user-row:active{background:rgba(251,191,36,.06);transform:scale(.99)}
 .detail-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;font-size:13.5px}
 .detail-row+.detail-row{border-top:1px solid var(--border)}
 .detail-label{color:var(--muted);font-weight:500;flex:0 0 auto;font-size:13px}
@@ -181,49 +191,80 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .notif-meta{display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.3px}
 .notif-meta svg{width:12px;height:12px;display:block}
 .notif-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
-.sync-overlay{position:fixed;inset:0;z-index:999;background:rgba(5,5,5,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(6px)}
-.sync-spinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sync-text{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.4px}
+.code-table-head{display:flex;justify-content:space-between;align-items:center;padding:0 14px 8px;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.code-mono{font-family:'Inter',monospace;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.admin-user-name.code-mono[data-code]{cursor:pointer;transition:color .2s ease}
+.admin-user-name.code-mono[data-code]:active{color:var(--accent)}
+.detail-value.mono[data-copy]{cursor:pointer;transition:color .2s ease}
+.detail-value.mono[data-copy]:active{color:var(--accent)}
+.code-status{font-size:12px;font-weight:800;letter-spacing:.3px;padding:2px 8px;border-radius:6px}
+.code-status.on{color:#22c55e;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35)}
+.code-status.off{color:var(--muted);background:rgba(161,161,170,.08);border:1px solid var(--border)}
+.code-gen-btn{width:100%;padding:14px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1c0f2b;font-family:inherit;font-size:14.5px;font-weight:900;letter-spacing:.4px;cursor:pointer;transition:transform .18s var(--ease),opacity .2s ease}
+.code-gen-btn:active{transform:scale(.97);opacity:.9}
+.code-del-btn{flex:0 0 auto;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid #7f1d1d;color:#ef4444;border-radius:7px;cursor:pointer;padding:0;margin-left:2px;transition:background-color .22s ease,transform .18s var(--ease)}
+.code-del-btn:active{background:#7f1d1d;color:#fff;transform:scale(.92)}
+.code-del-btn svg{width:16px;height:16px;display:block}
+.btn-delete-code{width:100%;padding:14px;border:none;border-radius:var(--radius);background:#dc2626;color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;letter-spacing:.3px;cursor:pointer;transition:background-color .22s ease,transform .18s var(--ease)}
+.btn-delete-code:active{background:#b91c1c;transform:scale(.97)}
+.link-row{display:flex;flex-direction:column;gap:4px;padding:11px 13px;border-bottom:1px solid var(--border)}
+.link-row:last-child{border-bottom:none}
+.link-url{font-size:13px;color:var(--text);font-weight:600;word-break:break-all}
+.link-code{font-size:12px;color:var(--muted);font-family:'Inter',monospace}
+.link-status{font-size:11px;font-weight:800;color:#22c55e}
+.link-status.off{color:#ef4444}
+.field label{font-size:12px;color:var(--muted);margin-bottom:4px;display:block;}
 </style>
 </head>
-<body>
-<div class="sync-overlay" id="syncOverlay">
-<div class="sync-spinner" id="syncSpinner"></div>
-<div class="sync-text" id="syncText">Đang kết nối máy chủ...</div>
+<body class="loading">
+<div class="auth-view" id="banModal" hidden style="z-index:1000; background:rgba(0,0,0,0.9)">
+<div class="auth-panel" style="border-color:#ef4444; text-align:center;">
+<div style="color:#ef4444; margin-bottom:12px;"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+<div style="font-size:18px; font-weight:900; color:#ef4444; margin-bottom:8px;">Hệ thống</div>
+<div style="font-size:24px; font-weight:800; color:var(--text); margin-bottom:16px; font-variant-numeric:tabular-nums;" id="banModalTime">00:00:00</div>
+<div style="font-size:14px; font-weight:600; margin-bottom:20px; padding:12px; background:#1c0f2b; border-radius:8px; word-break:break-word;" id="banModalReason">Vi phạm điều khoản</div>
+<div style="font-size:12px; color:var(--muted); margin-bottom:24px; display:flex; align-items:center; justify-content:center; gap:6px;">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 
+<span id="banModalDate">00/00/0000 - 00:00:00</span>
+</div>
+<div style="display:flex; gap:12px; width:100%;">
+<button class="auth-submit" style="background:#27272a; margin:0; color:#fff;" onclick="location.href='mailto:support@znexmods.com'">Hỗ trợ</button>
+<button class="auth-submit" style="margin:0;" onclick="document.getElementById('banModal').hidden=true;">Xác nhận</button>
+</div>
+</div>
 </div>
 
-<div class="auth-view" id="authView">
+<div class="auth-view" id="authView" hidden>
 <div class="auth-panel">
 <div class="auth-logo"><img src="https://cdn.upanhlaylink.com/i/xzhgyArB.png" alt="Logo"/></div>
 <div class="auth-body" id="loginPanel">
-<div class="auth-title">Chào mừng trở lại</div>
+<div class="auth-title" data-i18n="authWelcome">Chào mừng trở lại ZNEXMODS!</div>
 <form class="auth-form" id="loginForm" novalidate>
-<div class="field"><input type="text" id="loginName" placeholder="Tên hiển thị" autocomplete="username"/></div>
-<div class="field with-icon"><input type="password" id="loginPass" placeholder="Mật khẩu" autocomplete="current-password"/><button type="button" class="field-icon toggle-pw" data-target="loginPass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<label class="checkbox-row"><input type="checkbox" id="rememberMe"/><span class="cb-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Ghi nhớ đăng nhập</span></label>
-<button type="submit" class="auth-submit">Đăng nhập</button>
+<div class="field"><input type="text" id="loginName" placeholder="Tên hiển thị" data-i18n-ph="displayName" autocomplete="username"/></div>
+<div class="field with-icon"><input type="password" id="loginPass" placeholder="Mật khẩu" data-i18n-ph="password" autocomplete="current-password"/><button type="button" class="field-icon toggle-pw" data-target="loginPass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<label class="checkbox-row"><input type="checkbox" id="rememberMe"/><span class="cb-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span data-i18n="rememberMe">Ghi nhớ đăng nhập</span></label>
+<button type="submit" class="auth-submit" data-i18n="login">Đăng nhập</button>
 </form>
-<div class="auth-alt">Chưa có tài khoản? <button type="button" class="link-btn" id="toRegister">Đăng kí</button></div>
+<div class="auth-alt"><span data-i18n="noAccount">Chưa có tài khoản?</span> <button type="button" class="link-btn" id="toRegister" data-i18n="register">Đăng kí</button></div>
 </div>
 <div class="auth-body" id="registerPanel" hidden>
-<div class="auth-title">Thiết lập tài khoản</div>
+<div class="auth-title" data-i18n="registerTitle">Đăng kí tài khoản</div>
 <form class="auth-form" id="registerForm" novalidate>
-<div class="field"><input type="text" id="regUser" placeholder="Tên đăng nhập" autocomplete="username"/></div>
-<div class="field with-icon"><input type="password" id="regPass" placeholder="Mật khẩu" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="regPass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<div class="field with-icon"><input type="password" id="regConfirm" placeholder="Xác nhận" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="regConfirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<div class="field with-btn"><input type="text" id="regCode" placeholder="Mã kích hoạt" inputmode="numeric"/><button type="button" class="code-btn" id="getCode">Lấy mã</button></div>
-<button type="submit" class="auth-submit">Đăng kí</button>
+<div class="field"><input type="text" id="regUser" placeholder="Tên đăng nhập" data-i18n-ph="username" autocomplete="username"/></div>
+<div class="field with-icon"><input type="password" id="regPass" placeholder="Mật khẩu" data-i18n-ph="password" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="regPass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<div class="field with-icon"><input type="password" id="regConfirm" placeholder="Xác nhận" data-i18n-ph="confirmPw" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="regConfirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<div class="field with-btn">
+<input type="text" id="regCode" placeholder="Mã kích hoạt" data-i18n-ph="activationCode" inputmode="numeric"/>
+<a href="https://znexmods.com/layma" target="_blank" class="code-btn" id="getCode" data-i18n="getCode">Lấy mã</a>
+</div>
+<button type="submit" class="auth-submit" data-i18n="register">Đăng kí</button>
 </form>
-<div class="auth-alt">Đã có tài khoản? <button type="button" class="link-btn" id="toLogin">Đăng nhập</button></div>
+<div class="auth-alt"><span data-i18n="haveAccount">Đã có tài khoản?</span> <button type="button" class="link-btn" id="toLogin" data-i18n="login">Đăng nhập</button></div>
 </div>
 </div>
 </div>
 <header class="top-bar">
-<button class="notif-btn" id="btnNotif">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-<span class="notif-badge" id="notifBadge" hidden>1</span>
-</button>
+<button class="notif-btn" id="btnNotif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="notifBadge" hidden>1</span></button>
 <div class="brand-center" id="brandText">ZNEXMODS</div>
 <button class="settings-btn" id="btnSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 </header>
@@ -231,31 +272,26 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 <div class="app-container">
 <div class="user-ui">
 <div class="panel">
-<div class="slider-group"><div class="slider-header"><span>Chung</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
-<div class="slider-group"><div class="slider-header"><span>Kính ngắm chấm đỏ</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
-<div class="slider-group"><div class="slider-header"><span>Kính 2x</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
-<div class="slider-group"><div class="slider-header"><span>Kính 4x</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
-<div class="slider-group"><div class="slider-header"><span>Kính bắn tỉa</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
-<div class="slider-group"><div class="slider-header"><span>Camera 360°</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0"></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="general">Chung</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="redDot">Kính ngắm chấm đỏ</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="scope2x">Kính 2x</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="scope4x">Kính 4x</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="sniper">Kính bắn tỉa</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
+<div class="slider-group"><div class="slider-header"><span data-i18n="camera360">Camera 360°</span><span class="slider-value">0</span></div><input type="range" min="0" max="200" value="0" disabled></div>
 <div class="divider"></div>
 <div class="panel-footer"><div class="radio-group"><div class="radio-custom"></div><span id="fireBtnText">Nút bắn: 0</span></div><div class="dpi-text" id="dpiText" hidden>DPI: 0</div></div>
 </div>
-<div class="tabs"><button class="tab active" data-dpi="0">Không có DPI</button><button class="tab" data-dpi="1">Có DPI</button></div>
-<div><div class="section-title">Chọn mức độ nhạy</div><div class="preset-buttons"><button class="preset-btn" data-min="130" data-max="158" data-level="low">Thấp</button><button class="preset-btn active" data-min="168" data-max="183" data-level="mid">Trung bình</button><button class="preset-btn" data-min="180" data-max="200" data-level="high">Cao</button></div></div>
+<div class="tabs"><button class="tab active" data-dpi="0" data-i18n="noDpi">Không có DPI</button><button class="tab" data-dpi="1" data-i18n="hasDpi">Có DPI</button></div>
+<div><div class="section-title" data-i18n="chooseSens">Chọn mức độ nhạy</div><div class="preset-buttons"><button class="preset-btn" data-min="130" data-max="158" data-level="low" data-i18n="low">Thấp</button><button class="preset-btn active" data-min="168" data-max="183" data-level="mid" data-i18n="mid">Trung bình</button><button class="preset-btn" data-min="180" data-max="200" data-level="high" data-i18n="high">Cao</button></div></div>
 </div>
 <div class="admin-ui" id="adminHome">
 <div class="admin-header">
 <div class="admin-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-<div class="admin-meta">
-<div class="admin-name" id="adminName">znexmods</div>
-<div class="admin-role">Quản trị viên</div>
-</div>
+<div class="admin-meta"><div class="admin-name" id="adminName">znexmods</div><div class="admin-role" data-i18n="adminRole">Quản trị viên</div></div>
 </div>
 <div class="stat-grid">
-<div class="stat-card"><div class="stat-label">Tổng người dùng</div><div class="stat-value" id="statUsers">0</div></div>
-<div class="stat-card"><div class="stat-label">Thông báo</div><div class="stat-value" id="statNotifs">0</div></div>
-<div class="stat-card"><div class="stat-label">Phiên bản</div><div class="stat-value" id="statVersion" style="font-size:16px">v1.0</div></div>
-<div class="stat-card"><div class="stat-label">Trạng thái</div><div class="stat-value green" id="statStatus" style="font-size:16px">Hoạt động</div></div>
+<div class="stat-card"><div class="stat-label" data-i18n="totalUsers">Tổng người dùng</div><div class="stat-value" id="statUsers">0</div></div>
+<div class="stat-card"><div class="stat-label" data-i18n="notifications">Thông báo</div><div class="stat-value" id="statNotifs">0</div></div>
 </div>
 </div>
 </div>
@@ -264,46 +300,52 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 <div class="settings-topbar"><button class="back-btn" id="btnBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" id="settingsTitle">Cài đặt</span></div>
 <div class="settings-content">
 <div class="settings-list" id="userSettingsList">
-<div><div class="settings-group-title">Hồ sơ</div><div class="settings-group">
-<button class="settings-item" type="button" data-action="account"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="settings-label">Cài đặt tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="data"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="settings-label">Kiểm soát dữ liệu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<div><div class="settings-group-title" data-i18n="profileGroup">Hồ sơ</div><div class="settings-group">
+<button class="settings-item" type="button" data-action="account"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="settings-label" data-i18n="accountSettings">Cài đặt tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="data"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="settings-label" data-i18n="dataControl">Kiểm soát dữ liệu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div></div>
-<div><div class="settings-group-title">Ứng dụng</div><div class="settings-group">
-<button class="settings-item" type="button" data-action="language"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label">Ngôn ngữ</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="changelog"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="settings-label">Lịch sử cập nhật</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="terms"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="settings-label">Thỏa thuận dịch vụ</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<div><div class="settings-group-title" data-i18n="appGroup">Ứng dụng</div><div class="settings-group">
+<button class="settings-item" type="button" data-action="language"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label" data-i18n="language">Ngôn ngữ</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="changelog"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="settings-label" data-i18n="changelog">Lịch sử cập nhật</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="terms"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="settings-label" data-i18n="terms">Thỏa thuận dịch vụ</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div></div>
-<div><div class="settings-group-title">Về</div><div class="settings-group">
-<button class="settings-item" type="button" data-action="about"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span><span class="settings-label">Giới thiệu về chúng tôi</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="download"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span class="settings-label">Tải app</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="help"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span class="settings-label">Trợ giúp &amp; Góp ý</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<div><div class="settings-group-title" data-i18n="aboutGroup">Về</div><div class="settings-group">
+<button class="settings-item" type="button" data-action="about"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span><span class="settings-label" data-i18n="aboutUs">Giới thiệu về chúng tôi</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="download"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span class="settings-label" data-i18n="downloadApp">Tải app</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="help"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span class="settings-label" data-i18n="help">Trợ giúp &amp; Góp ý</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div></div>
 </div>
 <div class="settings-list" id="adminSettingsList" hidden>
 <div class="settings-group">
-<button class="settings-item" type="button" id="btnAdminUsers"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="settings-label">Quản lý người dùng</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" id="btnAdminBroadcast"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span><span class="settings-label">Gửi thông báo cho người dùng</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" id="btnAdminUsers"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="settings-label" data-i18n="manageUsers">Quản lý người dùng</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" id="btnAdminCodes"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg></span><span class="settings-label" data-i18n="createCode">Tạo mã kích hoạt</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" id="btnAdminGetCode"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span><span class="settings-label">Lấy mã (Link)</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" id="btnAdminBroadcast"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span><span class="settings-label" data-i18n="sendNotif">Gửi thông báo cho người dùng</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div>
 </div>
 </div>
 <div class="settings-footer">
-<button class="btn-logout" id="btnLogout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Đăng xuất</button>
-<div class="version">Phiên bản: v1.0</div>
+<button class="btn-logout" id="btnLogout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span data-i18n="logout">Đăng xuất</span></button>
+<div class="version"><span data-i18n="version">Phiên bản</span>: v1.0</div>
 </div>
 </div>
 <div class="settings-view" id="profileView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="profileBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Cài đặt hồ sơ</span></div>
+<div class="settings-topbar"><button class="back-btn" id="profileBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="profileSettings">Cài đặt hồ sơ</span></div>
 <div class="settings-content">
 <div class="settings-list">
-<div><div class="settings-group-title">Thông tin tài khoản</div><div class="profile-group">
-<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="profile-label">Tên đăng nhập</span><span class="profile-value" id="profileName">Người dùng</span><span class="badge-free" id="profileBadge">Free</span></div>
-<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg></span><span class="profile-label">Mã kích hoạt</span><span class="profile-value" id="profileCode">—</span></div>
-<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span><span class="profile-label">Email</span><button class="profile-add" type="button" data-type="email" data-ph="Nhập email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm</button></div>
-<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span class="profile-label">Số điện thoại</span><button class="profile-add" type="button" data-type="tel" data-ph="Nhập số điện thoại"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm</button></div>
+<div><div class="settings-group-title" data-i18n="accountInfo">Thông tin tài khoản</div><div class="profile-group">
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="profile-label" data-i18n="username">Tên đăng nhập</span><span class="profile-value" id="profileName">Người dùng</span><span class="badge-free" id="profileBadge">Free</span></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="profile-label" data-i18n="createdDate">Ngày tạo</span><span class="profile-value" id="profileCreated">—</span></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="profile-label" data-i18n="lastActive">Thời gian hoạt động lần cuối</span><span class="profile-value" id="profileLastActive">—</span></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg></span><span class="profile-label" data-i18n="activationCode">Mã kích hoạt</span><span class="profile-value" id="profileCode">—</span></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><span class="profile-label" data-i18n="deviceCode">Mẫu máy</span><span class="profile-value" id="profileDevice">—</span></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span><span class="profile-label" data-i18n="email">Email</span><button class="profile-add" type="button" data-type="email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add">Thêm</span></button></div>
+<div class="profile-row"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span class="profile-label" data-i18n="phone">Số điện thoại</span><button class="profile-add" type="button" data-type="tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add">Thêm</span></button></div>
 </div></div>
-<div><div class="settings-group-title">Khác</div><div class="settings-group">
-<button class="settings-item" type="button" data-action="upgrade"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="settings-label">Nâng cấp tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-action="password"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="settings-label">Đổi mật khẩu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<div class="note" style="text-align:left;padding:0 4px;margin-top:-4px" data-i18n="deviceNote">Mẫu máy được thu thập từ thiết bị thật và dùng để tính độ nhạy phù hợp với máy của bạn.</div>
+<div><div class="settings-group-title" data-i18n="otherGroup">Khác</div><div class="settings-group">
+<button class="settings-item" type="button" data-action="upgrade"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="settings-label" data-i18n="upgrade">Nâng cấp tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-action="password"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="settings-label" data-i18n="changePassword">Đổi mật khẩu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div></div>
 </div>
 </div>
@@ -314,88 +356,143 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 <div class="settings-list">
 <div class="settings-group" style="padding:14px;gap:12px;">
 <div class="field"><input type="text" id="linkInput" placeholder="Nhập Email" autocomplete="off"/></div>
-<div class="field with-btn"><input type="text" id="linkCode" placeholder="Mã xác minh" inputmode="numeric"/><button type="button" class="code-btn" id="linkGetCode">Lấy</button></div>
-<button type="button" class="auth-submit" id="linkConfirm" style="margin-top:4px;">Xác nhận</button>
+<div class="field with-btn"><input type="text" id="linkCode" placeholder="Mã xác minh" data-i18n-ph="verifyCode" inputmode="numeric"/><button type="button" class="code-btn" id="linkGetCode" data-i18n="get">Lấy</button></div>
+<button type="button" class="auth-submit" id="linkConfirm" style="margin-top:4px;" data-i18n="confirmBtn">Xác nhận</button>
 </div>
 </div>
 </div>
 </div>
 <div class="settings-view" id="pwView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="pwBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Đổi mật khẩu</span></div>
+<div class="settings-topbar"><button class="back-btn" id="pwBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="changePassword">Đổi mật khẩu</span></div>
 <div class="settings-content">
 <div class="settings-list">
 <div class="settings-group" style="padding:14px;gap:12px;">
-<div class="field with-icon"><input type="password" id="pwCurrent" placeholder="Nhập mật khẩu hiện tại" autocomplete="current-password"/><button type="button" class="field-icon toggle-pw" data-target="pwCurrent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<div class="field with-icon"><input type="password" id="pwNew" placeholder="Nhập mật khẩu mới" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="pwNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<div class="field with-icon"><input type="password" id="pwConfirm" placeholder="Xác minh mật khẩu mới" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="pwConfirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<button type="button" class="auth-submit" id="pwConfirmBtn" style="margin-top:4px;">Xác minh</button>
+<div class="field with-icon"><input type="password" id="pwCurrent" placeholder="Nhập mật khẩu hiện tại" data-i18n-ph="currentPw" autocomplete="current-password"/><button type="button" class="field-icon toggle-pw" data-target="pwCurrent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<div class="field with-icon"><input type="password" id="pwNew" placeholder="Nhập mật khẩu mới" data-i18n-ph="newPw" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="pwNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<div class="field with-icon"><input type="password" id="pwConfirm" placeholder="Xác minh mật khẩu mới" data-i18n-ph="confirmNewPw" autocomplete="new-password"/><button type="button" class="field-icon toggle-pw" data-target="pwConfirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<button type="button" class="auth-submit" id="pwConfirmBtn" style="margin-top:4px;" data-i18n="verifyBtn">Xác minh</button>
 </div>
 </div>
 </div>
 </div>
 <div class="settings-view" id="langView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="langBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Ngôn ngữ</span></div>
+<div class="settings-topbar"><button class="back-btn" id="langBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="language">Ngôn ngữ</span></div>
 <div class="settings-content">
 <div class="settings-list">
 <div class="settings-group">
-<button class="settings-item lang-item active" type="button" data-lang="vi"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label">Tiếng Việt (Hệ thống)</span><span class="settings-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></button>
-<button class="settings-item lang-item" type="button" data-lang="en"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label">Tiếng Anh</span><span class="settings-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></button>
+<button class="settings-item lang-item active" type="button" data-lang="vi"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label">Tiếng Việt</span><span class="settings-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></button>
+<button class="settings-item lang-item" type="button" data-lang="en"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="settings-label">English</span><span class="settings-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></button>
 </div>
 </div>
 </div>
 </div>
 <div class="settings-view" id="emptyView" hidden>
 <div class="settings-topbar"><button class="back-btn" id="emptyBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" id="emptyTitle">—</span></div>
-<div class="settings-content"><div class="settings-list"><div class="empty-msg">Chưa có nội dung</div></div></div>
+<div class="settings-content"><div class="settings-list"><div class="empty-msg" data-i18n="noContent">Chưa có nội dung</div></div></div>
 </div>
 <div class="settings-view" id="notifView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="notifBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Thông báo</span></div>
-<div class="settings-content">
-<div class="notif-list" id="notifList"></div>
-</div>
+<div class="settings-topbar"><button class="back-btn" id="notifBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="notifications">Thông báo</span></div>
+<div class="settings-content"><div class="notif-list" id="notifList"></div></div>
 </div>
 <div class="settings-view" id="adminUsersView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="adminUsersBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Quản lý người dùng</span></div>
-<div class="settings-content">
-<div class="settings-list">
-<div><div class="settings-group-title">Danh sách tài khoản</div><div class="settings-group" id="adminUserList"></div></div>
-</div>
-</div>
+<div class="settings-topbar"><button class="back-btn" id="adminUsersBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="manageUsers">Quản lý người dùng</span></div>
+<div class="settings-content"><div class="settings-list"><div><div class="settings-group-title" data-i18n="accountList">Danh sách tài khoản</div><div class="settings-group" id="adminUserList"></div></div></div></div>
 </div>
 <div class="settings-view" id="adminUserDetailView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="adminUserDetailBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Hồ sơ người dùng</span></div>
+<div class="settings-topbar"><button class="back-btn" id="adminUserDetailBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="userProfile">Hồ sơ người dùng</span></div>
 <div class="settings-content">
 <div class="settings-list">
-<div><div class="settings-group-title">Hồ sơ</div><div class="settings-group" id="adminUserDetailInfo"></div></div>
-<div><div class="settings-group-title">Hành động</div><div class="settings-group" id="adminUserDetailActions">
-<button class="settings-item" type="button" data-detail-act="chpw"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="settings-label">Đổi mật khẩu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-detail-act="upgrade"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="settings-label">Nâng tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-detail-act="ban"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></span><span class="settings-label" id="adminBanLabel">Ban tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
-<button class="settings-item" type="button" data-detail-act="delete" style="color:#ef4444"><span class="settings-icon" style="background:#7f1d1d;color:#ef4444"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span><span class="settings-label">Xóa tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<div><div class="settings-group-title" data-i18n="profileGroup">Hồ sơ</div><div class="settings-group" id="adminUserDetailInfo"></div></div>
+<div><div class="settings-group-title" data-i18n="actions">Hành động</div><div class="settings-group" id="adminUserDetailActions">
+<button class="settings-item" type="button" data-detail-act="chpw"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="settings-label" data-i18n="changePassword">Đổi mật khẩu</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-detail-act="upgrade"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="settings-label" data-i18n="upgradeAccount">Nâng tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-detail-act="ban"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></span><span class="settings-label" id="adminBanLabel" data-i18n="banAccount">Ban tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
+<button class="settings-item" type="button" data-detail-act="delete" style="color:#ef4444"><span class="settings-icon" style="background:#7f1d1d;color:#ef4444"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span><span class="settings-label" data-i18n="deleteAccount">Xóa tài khoản</span><span class="settings-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></button>
 </div></div>
 </div>
 </div>
 </div>
 <div class="settings-view" id="adminBroadcastView" hidden>
-<div class="settings-topbar"><button class="back-btn" id="adminBroadcastBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Gửi thông báo</span></div>
+<div class="settings-topbar"><button class="back-btn" id="adminBroadcastBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="sendNotifTitle">Gửi thông báo</span></div>
 <div class="settings-content">
 <div class="settings-list">
-<div><div class="settings-group-title">Tạo thông báo</div><div class="settings-group" style="padding:14px;gap:12px;">
-<div class="field"><input type="text" id="adminNotifFrom" placeholder="Tên hiển thị (để trống = Hệ thống)" maxlength="40"/></div>
-<div class="field"><textarea id="adminNotifContent" placeholder="Nội dung..." maxlength="500"></textarea></div>
-<button type="button" class="auth-submit" id="adminNotifSend" style="margin:0">Gửi</button>
+<div><div class="settings-group-title" data-i18n="createNotif">Tạo thông báo</div><div class="settings-group" style="padding:14px;gap:12px;">
+<div class="field"><input type="text" id="adminNotifFrom" placeholder="Tên hiển thị (để trống = Hệ thống)" data-i18n-ph="fromPlaceholder" maxlength="40"/></div>
+<div class="field"><textarea id="adminNotifContent" placeholder="Nội dung..." data-i18n-ph="contentPlaceholder" maxlength="500"></textarea></div>
+<button type="button" class="auth-submit" id="adminNotifSend" style="margin:0" data-i18n="send">Gửi</button>
 </div></div>
-<div><div class="settings-group-title">Lịch sử</div><div class="settings-group" id="adminNotifHistory"></div></div>
+<div><div class="settings-group-title" data-i18n="history">Lịch sử</div><div class="settings-group" id="adminNotifHistory"></div></div>
+</div>
+</div>
+</div>
+<div class="settings-view" id="adminCodesView" hidden>
+<div class="settings-topbar"><button class="back-btn" id="adminCodesBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="createCode">Tạo mã kích hoạt</span></div>
+<div class="settings-content">
+<div class="settings-list">
+<div><div class="settings-group-title" data-i18n="createCode">Tạo mã kích hoạt</div><div class="settings-group" style="padding:14px;gap:10px;">
+<button type="button" class="code-gen-btn" id="btnGenCode" data-i18n="genCode">Tạo mã</button>
+</div></div>
+<div><div class="settings-group-title" data-i18n="codeList">Mã kích hoạt</div>
+<div class="code-table-head"><span data-i18n="codeList">Mã kích hoạt</span><span data-i18n="codeStatus">Hoạt động</span></div>
+<div class="settings-group" id="adminCodeList"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="settings-view" id="adminCodeDetailView" hidden>
+<div class="settings-topbar"><button class="back-btn" id="adminCodeDetailBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title" data-i18n="codeProfile">Hồ sơ mã kích hoạt</span></div>
+<div class="settings-content">
+<div class="settings-list">
+<div><div class="settings-group-title" data-i18n="codeInfo">Thông tin mã</div><div class="settings-group" id="adminCodeDetailInfo"></div></div>
+<div><div class="settings-group" style="padding:14px"><button type="button" class="btn-delete-code" id="btnDeleteCode" data-i18n="deleteBtn">Xoá</button></div></div>
+</div>
+</div>
+</div>
+<div class="settings-view" id="adminGetCodeView" hidden>
+<div class="settings-topbar"><button class="back-btn" id="adminGetCodeBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Lấy mã (Link)</span></div>
+<div class="settings-content">
+<div class="settings-list">
+<div><div class="settings-group-title">Thêm Link lấy mã</div><div class="settings-group" style="padding:14px;gap:12px;">
+<div class="field"><input type="text" id="getCodeUrlInput" placeholder="Nhập link lấy mã..." autocomplete="off"/></div>
+<div class="field">
+<select id="getCodeSelect">
+<option value="">-- Chọn mã kích hoạt --</option>
+</select>
+</div>
+<button type="button" class="auth-submit" id="btnAddGetCode" style="margin:0;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1c0f2b;">Thêm</button>
+</div></div>
+<div><div class="settings-group-title">Danh sách liên kết</div>
+<div class="settings-group" id="adminGetCodeList"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="settings-view" id="banView" hidden>
+<div class="settings-topbar"><button class="back-btn" id="banBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><span class="settings-title">Ban tài khoản</span></div>
+<div class="settings-content">
+<div class="settings-list">
+<div class="settings-group" style="padding:14px;gap:12px;">
+<div class="field">
+<label style="font-size:12px;color:var(--muted);margin-bottom:4px;display:block;">Lựa ban</label>
+<select id="banDuration">
+<option value="86400000">24 giờ</option>
+<option value="259200000">3 ngày</option>
+<option value="604800000">7 ngày</option>
+<option value="2592000000">30 ngày</option>
+<option value="-1">Vĩnh viễn</option>
+</select>
+</div>
+<div class="field">
+<label style="font-size:12px;color:var(--muted);margin-bottom:4px;display:block;">Nội dung ban</label>
+<textarea id="banReason" placeholder="Nhập lý do..." style="min-height:90px;"></textarea>
+</div>
+<button type="button" class="auth-submit" id="banConfirmBtn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">Ban tài khoản</button>
+</div>
 </div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
-<footer class="footer-bar">
-<div class="footer-inner">
-<button class="btn-generate" id="btnGenerate">Tạo độ nhạy</button>
-<div class="note"><span>ⓘ Độ nhạy chỉ tham khảo không thể chính xác tuyệt đối.</span></div>
-</div>
-</footer>
+<footer class="footer-bar"><div class="footer-inner"><button class="btn-generate" id="btnGenerate" data-i18n="generateSens">Tạo độ nhạy</button><div class="note"><span data-i18n="noteText">ⓘ  Độ nhạy chỉ để tham khảo có thể hoàn toàn không chính xác.</span></div></div></footer>
 <script>
 (function(){
 'use strict';
@@ -406,263 +503,558 @@ document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 document.addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault()},{passive:false});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['+','-','=','0'].includes(e.key)){e.preventDefault()}},{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
-
 const $=id=>document.getElementById(id);
 const av=$('authView'),lp=$('loginPanel'),rp=$('registerPanel'),sv=$('settingsView'),pv=$('profileView'),lv=$('langView'),ev=$('emptyView'),linkView=$('linkView'),pwView=$('pwView'),notifView=$('notifView');
-let currentUser='',toastTimer=null,linkType='email',issuedCode='',currentDetailUser='';
-
+let currentUser='',toastTimer=null,linkType='email',currentDetailUser='',currentDetailCode='',banTimer=null;
 const ADMIN_USER='znexmods',ADMIN_PASS='LeTuanVu1905',MASTER_CODE='19052005';
-
-// ==========================================
-// ☁️ CẤU HÌNH FIREBASE CỦA BẠN
-// ==========================================
 const FIREBASE_URL='https://znexmods-default-rtdb.firebaseio.com';
-
-/* ---------- HTTP helpers ---------- */
-async function fbReq(path,method='GET',body=null){
-    const opts={method,headers:{'Content-Type':'application/json'}};
-    if(body!==null)opts.body=JSON.stringify(body);
-    const r=await fetch(`${FIREBASE_URL}${path}.json`,opts);
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.status===204?null:r.json();
-}
-
-/* ---------- Database Ops ---------- */
+const idb={
+    _db:null,
+    open(){
+        return new Promise((resolve,reject)=>{
+            if(this._db)return resolve(this._db);
+            const req=indexedDB.open('znexmods_db',1);
+            req.onupgradeneeded=e=>{
+                const db=e.target.result;
+                if(!db.objectStoreNames.contains('kv'))db.createObjectStore('kv');
+            };
+            req.onsuccess=e=>{this._db=e.target.result;resolve(this._db)};
+            req.onerror=e=>reject(e.target.error);
+        });
+    },
+    async get(key){
+        const db=await this.open();
+        return new Promise((resolve,reject)=>{
+            const req=db.transaction('kv','readonly').objectStore('kv').get(key);
+            req.onsuccess=()=>resolve(req.result);
+            req.onerror=()=>reject(req.error);
+        });
+    },
+    async set(key,val){
+        const db=await this.open();
+        return new Promise((resolve,reject)=>{
+            const tx=db.transaction('kv','readwrite');
+            tx.objectStore('kv').put(val,key);
+            tx.oncomplete=()=>resolve();
+            tx.onerror=()=>reject(tx.error);
+            tx.onabort=()=>reject(tx.error);
+        });
+    },
+    async remove(key){
+        const db=await this.open();
+        return new Promise((resolve,reject)=>{
+            const tx=db.transaction('kv','readwrite');
+            tx.objectStore('kv').delete(key);
+            tx.oncomplete=()=>resolve();
+            tx.onerror=()=>reject(tx.error);
+            tx.onabort=()=>reject(tx.error);
+        });
+    }
+};
+async function fbReq(path,method='GET',body=null){const opts={method,headers:{'Content-Type':'application/json'}};if(body!==null)opts.body=JSON.stringify(body);const r=await fetch(`${FIREBASE_URL}${path}.json`,opts);if(!r.ok)throw new Error('HTTP '+r.status);return r.status===204?null:r.json();}
 const getAllUsers=async()=>(await fbReq('/users'))||{};
 const getUser=async(name)=>await fbReq('/users/'+encodeURIComponent(name));
 const saveUser=async(name,data)=>await fbReq('/users/'+encodeURIComponent(name),'PUT',data);
 const patchUser=async(name,data)=>await fbReq('/users/'+encodeURIComponent(name),'PATCH',data);
 const deleteUser=async(name)=>await fbReq('/users/'+encodeURIComponent(name),'DELETE');
-
 const getCode=async(code)=>await fbReq('/codes/'+encodeURIComponent(code));
 const saveCode=async(code,data)=>await fbReq('/codes/'+encodeURIComponent(code),'PUT',data);
-
-const getAllNotifs=async()=>{
-    const raw=(await fbReq('/notifications'))||{};
-    return Object.keys(raw).map(k=>({...raw[k],id:k})).sort((a,b)=>(b.date||0)-(a.date||0));
-};
+const deleteCode=async(code)=>await fbReq('/codes/'+encodeURIComponent(code),'DELETE');
+const getAllCodes=async()=>(await fbReq('/codes'))||{};
+const getLinks=async()=>(await fbReq('/getlinks'))||{};
+const saveLink=async(id,data)=>await fbReq('/getlinks/'+id,'PUT',data);
+const deleteLink=async(id)=>await fbReq('/getlinks/'+id,'DELETE');
+const getAllNotifs=async()=>{const raw=(await fbReq('/notifications'))||{};return Object.keys(raw).map(k=>({...raw[k],id:k})).sort((a,b)=>(b.date||0)-(a.date||0));};
 const pushNotif=async(n)=>await fbReq('/notifications','POST',n);
 const deleteNotif=async(id)=>await fbReq('/notifications/'+id,'DELETE');
 const patchNotif=async(id,data)=>await fbReq('/notifications/'+id,'PATCH',data);
-
 const getConfig=async()=>(await fbReq('/config'))||{};
+async function ensureAdmin(){try{const adm=await getUser(ADMIN_USER);if(!adm){await saveUser(ADMIN_USER,{password:ADMIN_PASS,code:MASTER_CODE,type:'admin',banned:false,created:Date.now()});}}catch(e){console.error('ensureAdmin failed:',e);}}
 
-async function ensureAdmin(){
+const I18N={
+    vi:{
+        authWelcome:'Chào mừng trở lại ZNEXMODS!',
+        displayName:'Tên hiển thị',
+        password:'Mật khẩu',
+        rememberMe:'Ghi nhớ đăng nhập',
+        login:'Đăng nhập',
+        noAccount:'Chưa có tài khoản?',
+        register:'Đăng kí',
+        registerTitle:'Đăng kí tài khoản',
+        username:'Tên đăng nhập',
+        confirmPw:'Xác nhận',
+        activationCode:'Mã kích hoạt',
+        getCode:'Lấy mã',
+        codeTaken:'Đã lấy ✓',
+        haveAccount:'Đã có tài khoản?',
+        general:'Chung',
+        redDot:'Kính ngắm chấm đỏ',
+        scope2x:'Kính 2x',
+        scope4x:'Kính 4x',
+        sniper:'Kính bắn tỉa',
+        camera360:'Camera 360°',
+        fireBtn:'Nút bắn',
+        dpi:'DPI',
+        noDpi:'Không có DPI',
+        hasDpi:'Có DPI',
+        chooseSens:'Chọn mức độ nhạy',
+        low:'Thấp',
+        mid:'Trung bình',
+        high:'Cao',
+        generateSens:'Tạo độ nhạy',
+        generated:'Đã tạo ✓',
+        noteText:'ⓘ  Độ nhạy chỉ để tham khảo có thể hoàn toàn không chính xác.',
+        settings:'Cài đặt',
+        adminManage:'Quản lý',
+        profileGroup:'Hồ sơ',
+        accountSettings:'Cài đặt tài khoản',
+        dataControl:'Kiểm soát dữ liệu',
+        appGroup:'Ứng dụng',
+        language:'Ngôn ngữ',
+        changelog:'Lịch sử cập nhật',
+        terms:'Thỏa thuận dịch vụ',
+        aboutGroup:'Về',
+        aboutUs:'Giới thiệu về chúng tôi',
+        downloadApp:'Tải app',
+        help:'Trợ giúp & Góp ý',
+        logout:'Đăng xuất',
+        version:'Phiên bản',
+        profileSettings:'Cài đặt hồ sơ',
+        accountInfo:'Thông tin tài khoản',
+        createdDate:'Ngày tạo',
+        lastActive:'Thời gian hoạt động lần cuối',
+        deviceCode:'Mẫu máy',
+        email:'Email',
+        phone:'Số điện thoại',
+        add:'Thêm',
+        deviceNote:'Mẫu máy được thu thập từ thiết bị thật và dùng để tính độ nhạy phù hợp với máy của bạn.',
+        otherGroup:'Khác',
+        upgrade:'Nâng cấp tài khoản',
+        changePassword:'Đổi mật khẩu',
+        linkEmailTitle:'Thêm liên kết Email',
+        linkPhoneTitle:'Thêm liên kết Số điện thoại',
+        inputEmail:'Nhập Email',
+        inputPhone:'Nhập Số điện thoại',
+        verifyCode:'Mã xác minh',
+        get:'Lấy',
+        confirmBtn:'Xác nhận',
+        currentPw:'Nhập mật khẩu hiện tại',
+        newPw:'Nhập mật khẩu mới',
+        confirmNewPw:'Xác minh mật khẩu mới',
+        verifyBtn:'Xác minh',
+        notifications:'Thông báo',
+        noNotif:'Chưa có thông báo',
+        cantLoadNotif:'Không tải được thông báo',
+        system:'Hệ thống',
+        manageUsers:'Quản lý người dùng',
+        sendNotif:'Gửi thông báo cho người dùng',
+        sendNotifTitle:'Gửi thông báo',
+        createNotif:'Tạo thông báo',
+        fromPlaceholder:'Tên hiển thị (để trống = Hệ thống)',
+        contentPlaceholder:'Nội dung...',
+        send:'Gửi',
+        history:'Lịch sử',
+        accountList:'Danh sách tài khoản',
+        userProfile:'Hồ sơ người dùng',
+        actions:'Hành động',
+        upgradeAccount:'Nâng tài khoản',
+        banAccount:'Ban tài khoản',
+        unbanAccount:'Bỏ ban tài khoản',
+        deleteAccount:'Xóa tài khoản',
+        adminRole:'Quản trị viên',
+        totalUsers:'Tổng người dùng',
+        statVersion:'Phiên bản',
+        statStatus:'Trạng thái',
+        active:'Hoạt động',
+        maintenance:'Bảo trì',
+        noUsers:'Chưa có người dùng',
+        cantLoadUsers:'Không tải được danh sách',
+        noContent:'Chưa có nội dung',
+        fillAll:'Vui lòng nhập đầy đủ thông tin',
+        pwMismatch:'Mật khẩu xác nhận không khớp',
+        userExists:'Tên đăng nhập đã tồn tại',
+        invalidCode:'Mã kích hoạt không hợp lệ',
+        registerSuccess:'Đăng ký thành công, hãy đăng nhập',
+        serverError:'Lỗi kết nối máy chủ',
+        notRegistered:'Tài khoản chưa được đăng ký',
+        wrongPw:'Mật khẩu không đúng',
+        banned:'Tài khoản của bạn đã bị khóa',
+        featureSoon:'Hoạt động ở phiên bản sau',
+        noChangelog:'Chưa có phiên bản nào gần đây',
+        unavailable:'Không khả dụng',
+        enterInfo:'Vui lòng nhập thông tin',
+        getVerifyCode:'Vui lòng lấy mã xác minh',
+        linkedEmail:'Đã liên kết Email',
+        linkedPhone:'Đã liên kết Số điện thoại',
+        userNotExist:'Tài khoản không tồn tại',
+        wrongCurrentPw:'Mật khẩu hiện tại không đúng',
+        pwChanged:'Mật khẩu của bạn đã được đổi',
+        pwTooShort:'Mật khẩu quá ngắn',
+        adminSupreme:'Admin đã là tối cao',
+        alreadyVip:'Tài khoản đã là VIP',
+        upgradedVip:'Đã nâng tài khoản lên VIP',
+        cantBanAdmin:'Không thể ban Admin',
+        bannedUser:'Đã ban tài khoản',
+        unbannedUser:'Đã bỏ ban',
+        cantDeleteAdmin:'Không thể xóa Admin',
+        deletedUser:'Đã xóa tài khoản',
+        enterContent:'Nhập nội dung',
+        notifSent:'Đã gửi thông báo',
+        notifDeleted:'Đã xóa thông báo',
+        confirmDelete:'Xóa tài khoản "{name}"? Hành động không thể hoàn tác!',
+        promptNewPw:'Nhập mật khẩu mới cho "{name}":',
+        changedPw:'Đã đổi mật khẩu',
+        createCode:'Tạo mã kích hoạt',
+        genCode:'Tạo mã',
+        codeList:'Mã kích hoạt',
+        codeStatus:'Hoạt động',
+        codeUsed:'Có',
+        codeUnused:'Chưa',
+        codeProfile:'Hồ sơ mã kích hoạt',
+        codeInfo:'Thông tin mã',
+        codeCreated:'Ngày tạo',
+        codeUserName:'Tên người dùng',
+        codeUsedAt:'Ngày sử dụng',
+        generatedCode:'Đã tạo mã',
+        createCodeFailed:'Không thể tạo mã',
+        noCodes:'Chưa có mã kích hoạt',
+        deleteBtn:'Xoá',
+        confirmDeleteCode:'Xoá mã "{code}"? Hành động không thể hoàn tác!',
+        deletedCode:'Đã xoá mã',
+        copied:'Đã sao chép'
+    },
+    en:{
+        authWelcome:'Welcome back to ZNEXMODS!',
+        displayName:'Display name',
+        password:'Password',
+        rememberMe:'Remember me',
+        login:'Log in',
+        noAccount:"Don't have an account?",
+        register:'Sign up',
+        registerTitle:'Create account',
+        username:'Username',
+        confirmPw:'Confirm password',
+        activationCode:'Activation code',
+        getCode:'Get code',
+        codeTaken:'Got it ✓',
+        haveAccount:'Already have an account?',
+        general:'General',
+        redDot:'Red dot sight',
+        scope2x:'2x scope',
+        scope4x:'4x scope',
+        sniper:'Sniper scope',
+        camera360:'Camera 360°',
+        fireBtn:'Fire button',
+        dpi:'DPI',
+        noDpi:'No DPI',
+        hasDpi:'With DPI',
+        chooseSens:'Choose sensitivity level',
+        low:'Low',
+        mid:'Medium',
+        high:'High',
+        generateSens:'Generate sensitivity',
+        generated:'Generated ✓',
+        noteText:'ⓘ  Sensitivity is for reference only and may not be accurate.',
+        settings:'Settings',
+        adminManage:'Manage',
+        profileGroup:'Profile',
+        accountSettings:'Account settings',
+        dataControl:'Data controls',
+        appGroup:'App',
+        language:'Language',
+        changelog:'Changelog',
+        terms:'Terms of service',
+        aboutGroup:'About',
+        aboutUs:'About us',
+        downloadApp:'Download app',
+        help:'Help & Feedback',
+        logout:'Log out',
+        version:'Version',
+        profileSettings:'Profile settings',
+        accountInfo:'Account information',
+        createdDate:'Created date',
+        lastActive:'Last active',
+        deviceCode:'Device model',
+        email:'Email',
+        phone:'Phone number',
+        add:'Add',
+        deviceNote:'Device model is collected from your real device and used to calculate suitable sensitivity.',
+        otherGroup:'Other',
+        upgrade:'Upgrade account',
+        changePassword:'Change password',
+        linkEmailTitle:'Link Email',
+        linkPhoneTitle:'Link Phone number',
+        inputEmail:'Enter Email',
+        inputPhone:'Enter Phone number',
+        verifyCode:'Verification code',
+        get:'Get',
+        confirmBtn:'Confirm',
+        currentPw:'Enter current password',
+        newPw:'Enter new password',
+        confirmNewPw:'Confirm new password',
+        verifyBtn:'Verify',
+        notifications:'Notifications',
+        noNotif:'No notifications',
+        cantLoadNotif:'Failed to load notifications',
+        system:'System',
+        manageUsers:'Manage users',
+        sendNotif:'Send notification to users',
+        sendNotifTitle:'Send notification',
+        createNotif:'Create notification',
+        fromPlaceholder:'Display name (empty = System)',
+        contentPlaceholder:'Content...',
+        send:'Send',
+        history:'History',
+        accountList:'Account list',
+        userProfile:'User profile',
+        actions:'Actions',
+        upgradeAccount:'Upgrade account',
+        banAccount:'Ban account',
+        unbanAccount:'Unban account',
+        deleteAccount:'Delete account',
+        adminRole:'Administrator',
+        totalUsers:'Total users',
+        statVersion:'Version',
+        statStatus:'Status',
+        active:'Active',
+        maintenance:'Maintenance',
+        noUsers:'No users yet',
+        cantLoadUsers:'Failed to load list',
+        noContent:'No content',
+        fillAll:'Please fill in all fields',
+        pwMismatch:'Passwords do not match',
+        userExists:'Username already exists',
+        invalidCode:'Invalid activation code',
+        registerSuccess:'Registration successful, please log in',
+        serverError:'Server connection error',
+        notRegistered:'Account not registered',
+        wrongPw:'Incorrect password',
+        banned:'Your account has been locked',
+        featureSoon:'Available in a future version',
+        noChangelog:'No recent versions',
+        unavailable:'Unavailable',
+        enterInfo:'Please enter information',
+        getVerifyCode:'Please get a verification code',
+        linkedEmail:'Email linked',
+        linkedPhone:'Phone number linked',
+        userNotExist:'Account does not exist',
+        wrongCurrentPw:'Current password is incorrect',
+        pwChanged:'Your password has been changed',
+        pwTooShort:'Password too short',
+        adminSupreme:'Admin is already supreme',
+        alreadyVip:'Account is already VIP',
+        upgradedVip:'Account upgraded to VIP',
+        cantBanAdmin:'Cannot ban Admin',
+        bannedUser:'Account banned',
+        unbannedUser:'Ban lifted',
+        cantDeleteAdmin:'Cannot delete Admin',
+        deletedUser:'Account deleted',
+        enterContent:'Enter content',
+        notifSent:'Notification sent',
+        notifDeleted:'Notification deleted',
+        confirmDelete:'Delete account "{name}"? This action cannot be undone!',
+        promptNewPw:'Enter new password for "{name}":',
+        changedPw:'Password changed',
+        createCode:'Create activation code',
+        genCode:'Generate',
+        codeList:'Activation code',
+        codeStatus:'Active',
+        codeUsed:'Yes',
+        codeUnused:'No',
+        codeProfile:'Code profile',
+        codeInfo:'Code information',
+        codeCreated:'Created date',
+        codeUserName:'Username',
+        codeUsedAt:'Used date',
+        generatedCode:'Code generated',
+        createCodeFailed:'Cannot generate code',
+        noCodes:'No activation codes yet',
+        deleteBtn:'Delete',
+        confirmDeleteCode:'Delete code "{code}"? This cannot be undone!',
+        deletedCode:'Code deleted',
+        copied:'Copied'
+    }
+};
+let LANG='vi';
+const t=(k,vars)=>{let s=(I18N[LANG]&&I18N[LANG][k])||(I18N.vi[k])||k;if(vars)Object.keys(vars).forEach(v=>{s=s.split('{'+v+'}').join(vars[v])});return s;};
+let lastFire=0,lastDpi=0;
+const ftEl=$('fireBtnText'),dtEl=$('dpiText'),bgEl=$('btnGenerate');
+const copyText=async(text)=>{
+    if(!text)return false;
+    try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(text);return true;}}catch(e){}
     try{
-        const adm=await getUser(ADMIN_USER);
-        if(!adm){
-            await saveUser(ADMIN_USER,{
-                password:ADMIN_PASS,
-                code:MASTER_CODE,
-                type:'admin',
-                banned:false,
-                created:Date.now()
-            });
-        }
-    }catch(e){console.error('ensureAdmin failed:',e);}
-}
+        const ta=document.createElement('textarea');
+        ta.value=text;
+        ta.setAttribute('readonly','');
+        ta.style.position='fixed';ta.style.top='0';ta.style.left='0';ta.style.opacity='0';ta.style.pointerEvents='none';
+        document.body.appendChild(ta);
+        ta.select();ta.setSelectionRange(0,text.length);
+        const ok=document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+    }catch(e){return false;}
+};
+const applyLang=()=>{
+    document.documentElement.lang=LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.dataset.i18n);if(v!==undefined)el.textContent=v;});
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const v=t(el.dataset.i18nPh);if(v!==undefined)el.placeholder=v;});
+    ftEl.textContent=t('fireBtn')+': '+lastFire;
+    dtEl.textContent=t('dpi')+': '+lastDpi;
+    if(bgEl.classList.contains('done'))bgEl.textContent=t('generated');else bgEl.textContent=t('generateSens');
+    if(!linkView.hidden){
+        $('linkTitle').textContent=linkType==='email'?t('linkEmailTitle'):t('linkPhoneTitle');
+        $('linkInput').placeholder=linkType==='email'?t('inputEmail'):t('inputPhone');
+    }
+    if(!notifView.hidden)renderUserNotifications();
+    if(!$('adminBroadcastView').hidden)renderAdminNotifHistory();
+    if(!$('adminUserDetailView').hidden)renderAdminUserDetail();
+    if(!$('adminCodesView').hidden)renderAdminCodes();
+    if(!$('adminGetCodeView').hidden)renderAdminGetCodeList();
+    if(!$('adminCodeDetailView').hidden&&currentDetailCode)renderAdminCodeDetail(currentDetailCode);
+    updateView();
+};
 
 const EYE_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-
-document.querySelectorAll('.toggle-pw').forEach(b=>b.addEventListener('click',()=>{
-    const i=$(b.dataset.target);if(!i)return;
-    const p=i.type==='password';i.type=p?'text':'password';b.innerHTML=p?EYE_OFF:EYE_ON;
-}));
-
+document.querySelectorAll('.toggle-pw').forEach(b=>b.addEventListener('click',()=>{const i=$(b.dataset.target);if(!i)return;const p=i.type==='password';i.type=p?'text':'password';b.innerHTML=p?EYE_OFF:EYE_ON;}));
 const sp=p=>{lp.hidden=p!=='login';rp.hidden=p!=='register'};
 $('toRegister').onclick=()=>sp('register');
 $('toLogin').onclick=()=>sp('login');
-
-$('getCode').onclick=function(){
-    issuedCode=String(Math.floor(100000+Math.random()*900000));
-    $('regCode').value=issuedCode;
-    this.textContent='Đã lấy ✓';
-    setTimeout(()=>this.textContent='Lấy mã',1500);
-};
-
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=ts=>{const d=new Date(ts),p=n=>n<10?'0'+n:n;return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} - ${p(d.getHours())}:${p(d.getMinutes())}`};
-
+const fmtTime=ts=>{const d=new Date(ts),p=n=>n<10?'0'+n:n;return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`};
 const isAdmin=()=>currentUser===ADMIN_USER;
-
-function updateView(){
-    document.body.classList.toggle('is-admin',isAdmin());
-    $('brandText').textContent=isAdmin()?'ADMIN PANEL':'ZNEXMODS';
-    $('settingsTitle').textContent=isAdmin()?'Quản lý':'Cài đặt';
-    $('userSettingsList').hidden=isAdmin();
-    $('adminSettingsList').hidden=!isAdmin();
-    updateBadge();
-    updateNotifBadge();
-    if(isAdmin())renderAdminHome();
-}
-
-async function updateBadge(){
-    const b=$('profileBadge');if(!b)return;
-    if(isAdmin()){b.textContent='Admin';b.className='badge-free badge-admin';return}
-    try{
-        const u=await getUser(currentUser);
-        if(u&&u.type==='vip'){b.textContent='VIP';b.className='badge-free badge-vip'}
-        else{b.textContent='Free';b.className='badge-free'}
-    }catch{b.textContent='Free';b.className='badge-free'}
-}
-
-async function updateNotifBadge(){
-    const badge=$('notifBadge');if(!badge)return;
-    try{
-        const unread=(await getAllNotifs()).filter(n=>!n.read).length;
-        badge.textContent=unread>9?'9+':String(unread);
-        badge.hidden=unread===0;
-    }catch{badge.hidden=true}
-}
-
+function updateView(){document.body.classList.toggle('is-admin',isAdmin());$('brandText').textContent=isAdmin()?'ADMIN PANEL':'ZNEXMODS';$('settingsTitle').textContent=isAdmin()?t('adminManage'):t('settings');$('userSettingsList').hidden=isAdmin();$('adminSettingsList').hidden=!isAdmin();updateBadge();updateNotifBadge();if(isAdmin())renderAdminHome();}
+async function updateBadge(){const b=$('profileBadge');if(!b)return;if(!currentUser){b.textContent='Free';b.className='badge-free';return}if(isAdmin()){b.textContent='Admin';b.className='badge-free badge-admin';return}try{const u=await getUser(currentUser);if(u&&u.type==='vip'){b.textContent='VIP';b.className='badge-free badge-vip'}else{b.textContent='Free';b.className='badge-free'}}catch{b.textContent='Free';b.className='badge-free'}}
+async function updateNotifBadge(){const badge=$('notifBadge');if(!badge)return;if(!currentUser){badge.hidden=true;return}try{const unread=(await getAllNotifs()).filter(n=>!n.read).length;badge.textContent=unread>9?'9+':String(unread);badge.hidden=unread===0;}catch{badge.hidden=true}}
 async function syncProfileCode(){
-    $('profileName').textContent=currentUser||'Người dùng';
+    $('profileName').textContent=currentUser||'—';
+    $('profileDevice').textContent=DEV.code;
+    saveDevice();
     try{
         const u=await getUser(currentUser);
         $('profileCode').textContent=(u&&u.code)||'—';
-    }catch{$('profileCode').textContent='—'}
-}
-
-async function fa(user){
-    if(user)currentUser=user;
-    av.classList.add('fade-out');
-    setTimeout(()=>av.hidden=true,300);
-    await syncProfileCode();
-    updateView();
-    const mv=$('mainView');if(mv)mv.scrollTop=0;
-    try{
-        const cfg=await getConfig();
-        if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);
-    }catch(_){}
-}
-
-/* ================= REGISTER ================= */
-$('registerForm').onsubmit=async function(e){
-    e.preventDefault();
-    const user=$('regUser').value.trim(),p=$('regPass').value,c=$('regConfirm').value,code=$('regCode').value.trim();
-    if(!user||!p||!c||!code)return toast('Vui lòng nhập đầy đủ thông tin');
-    if(p!==c)return toast('Mật khẩu xác nhận không khớp');
-    try{
-        const existing=await getUser(user);
-        if(existing)return toast('Tên đăng nhập đã tồn tại');
-
-        let valid=false;
-        if(code===issuedCode||code===MASTER_CODE){valid=true}
-        else{
-            const adminCode=await getCode(code);
-            if(adminCode&&!adminCode.used)valid=true;
-        }
-        if(!valid)return toast('Mã kích hoạt không hợp lệ');
-
-        await saveUser(user,{
-            password:p,
-            code:code,
-            type:'free',
-            banned:false,
-            created:Date.now()
-        });
-
-        if(code!==issuedCode&&code!==MASTER_CODE){
-            const adminCode=await getCode(code);
-            if(adminCode)await saveCode(code,{...adminCode,used:true,usedBy:user});
-        }
-
-        toast('Đăng ký thành công, hãy đăng nhập');
-        $('loginName').value=user;
-        $('loginPass').value='';
-        $('regUser').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';
-        issuedCode='';
-        setTimeout(()=>sp('login'),600);
-    }catch(err){
-        toast('Lỗi kết nối máy chủ');
-        console.error(err);
+        const createdEl=$('profileCreated');
+        if(createdEl)createdEl.textContent=(u&&u.created)?fmtDate(u.created):'—';
+        const lastActiveEl=$('profileLastActive');
+        if(lastActiveEl)lastActiveEl.textContent=(u&&u.lastActive)?fmtDate(u.lastActive):'—';
+        await patchUser(currentUser,{lastActive:Date.now()});
+    }catch{
+        $('profileCode').textContent='—';
+        const createdEl=$('profileCreated');
+        if(createdEl)createdEl.textContent='—';
+        const lastActiveEl=$('profileLastActive');
+        if(lastActiveEl)lastActiveEl.textContent='—';
     }
-};
-
-/* ================= LOGIN ================= */
-$('loginForm').onsubmit=async function(e){
-    e.preventDefault();
-    const name=$('loginName').value.trim(),pass=$('loginPass').value.trim();
-    if(!name||!pass)return toast('Vui lòng nhập đầy đủ thông tin');
-    try{
-        const u=await getUser(name);
-        if(!u)return toast('Tài khoản chưa được đăng ký');
-        if(u.password!==pass)return toast('Mật khẩu không đúng');
-        if(u.banned)return toast('Tài khoản của bạn đã bị khóa');
-        if($('rememberMe').checked){
-            localStorage.setItem('zn_name',name);
-            localStorage.setItem('zn_remember','1');
-        }else{
-            localStorage.removeItem('zn_name');
-            localStorage.removeItem('zn_remember');
-        }
-        await fa(name);
-    }catch(err){
-        toast('Lỗi kết nối máy chủ');
-        console.error(err);
-    }
-};
-
-/* ================= RESTORE SESSION ================= */
+}
+async function fa(user){if(user)currentUser=user;av.classList.add('fade-out');setTimeout(()=>av.hidden=true,350);await syncProfileCode();updateView();const mv=$('mainView');if(mv)mv.scrollTop=0;try{const cfg=await getConfig();if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);}catch(_){}}
+$('registerForm').onsubmit=async function(e){e.preventDefault();const user=$('regUser').value.trim(),p=$('regPass').value,c=$('regConfirm').value,code=$('regCode').value.trim();if(!user||!p||!c||!code)return toast(t('fillAll'));if(p!==c)return toast(t('pwMismatch'));try{const existing=await getUser(user);if(existing)return toast(t('userExists'));let valid=false,adminCode=null;if(code===MASTER_CODE){valid=true}else{adminCode=await getCode(code);if(adminCode&&!adminCode.used)valid=true;}if(!valid)return toast(t('invalidCode'));await saveUser(user,{password:p,code:code,type:'free',banned:false,created:Date.now(),lastActive:Date.now()});if(adminCode)await saveCode(code,{...adminCode,used:true,usedBy:user,usedAt:Date.now()});toast(t('registerSuccess'));$('loginName').value=user;$('loginPass').value='';$('regUser').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';setTimeout(()=>sp('login'),600);}catch(err){toast(t('serverError'));console.error(err);}};
+$('loginForm').onsubmit=async function(e){e.preventDefault();const name=$('loginName').value.trim(),pass=$('loginPass').value.trim();if(!name||!pass)return toast(t('fillAll'));try{const u=await getUser(name);if(!u)return toast(t('notRegistered'));if(u.password!==pass)return toast(t('wrongPw'));if(u.banned){if(u.banUntil&&u.banUntil!==-1&&Date.now()>u.banUntil){await patchUser(name,{banned:false,banReason:'',banUntil:0,bannedAt:0});}else{showBanModal(u.banReason,u.bannedAt,u.banUntil);return;}}await idb.set('zn_name',name);await fa(name);}catch(err){toast(t('serverError'));console.error(err);}};
 async function restoreSession(){
-    const s=localStorage.getItem('zn_name'),r=localStorage.getItem('zn_remember');
+    let s;
+    try{s=await idb.get('zn_name');}catch(e){return false;}
     if(!s)return false;
-    $('loginName').value=s;currentUser=s;
-    $('rememberMe').checked=(r==='1');
-    if(r!=='1')return false;
+    $('loginName').value=s;
     try{
         const u=await getUser(s);
-        if(u&&!u.banned){
-            av.hidden=true;av.classList.remove('fade-out');
+        if(u){
+            if(u.banned){
+                if(u.banUntil&&u.banUntil!==-1&&Date.now()>u.banUntil){
+                    await patchUser(s,{banned:false,banReason:'',banUntil:0,bannedAt:0});
+                }else{
+                    showBanModal(u.banReason,u.bannedAt,u.banUntil);
+                    return false;
+                }
+            }
+            currentUser=s;
+            av.hidden=true;
+            av.classList.remove('fade-out');
             await syncProfileCode();
-            updateView();
-            const cfg=await getConfig();
-            if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);
+            try{const cfg=await getConfig();if(cfg.announcement&&!isAdmin())setTimeout(()=>toast('📢 '+cfg.announcement),700);}catch(_){}
             return true;
         }
-    }catch(e){console.error(e)}
+    }catch(e){console.error(e);}
+    currentUser='';
     return false;
 }
 
-/* ================= SLIDER / SENSITIVITY ================= */
+function showBanModal(reason,bannedAt,banUntil){
+    $('banModal').hidden=false;
+    $('banModalReason').textContent=reason||'Vi phạm điều khoản';
+    $('banModalDate').textContent=bannedAt?fmtDate(bannedAt):'—';
+    clearInterval(banTimer);
+    const updateClock=()=>{$('banModalTime').textContent=fmtTime(Date.now());};
+    updateClock();
+    banTimer=setInterval(updateClock,1000);
+}
+
 const sl=document.querySelectorAll('input[type=range]'),dt=$('dpiText'),ft=$('fireBtnText'),pg=document.querySelector('.preset-buttons'),bg=$('btnGenerate');
 let gt=null;
-const pc={low:{dpi:[620,720],fire:[58,68]},mid:{dpi:[520,620],fire:[52,62]},high:{dpi:[420,520],fire:[45,55]}};
-
-const us=(el,a)=>{
-    const mn=+el.min||0,mx=+el.max||100;
-    el.style.setProperty('--p',((el.value-mn)/(mx-mn))*100+'%');
-    const l=el.parentElement.querySelector('.slider-value');if(!l)return;
-    l.textContent=el.value;
-    if(a){l.classList.remove('flash');void l.offsetWidth;l.classList.add('flash')}
-};
+const us=(el,a)=>{const mn=+el.min||0,mx=+el.max||100;el.style.setProperty('--p',((el.value-mn)/(mx-mn))*100+'%');const l=el.parentElement.querySelector('.slider-value');if(!l)return;l.textContent=el.value;if(a){l.classList.remove('flash');void l.offsetWidth;l.classList.add('flash')}};
 const fl=el=>{el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
-const ud=()=>{const t=document.querySelector('.tab.active');dt.hidden=!(t&&t.dataset.dpi==='1')};
-const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const gs=()=>{
-    const a=pg.querySelector('.preset-btn.active');if(!a)return;
-    const mn=+a.dataset.min,mx=+a.dataset.max,c=pc[a.dataset.level];
-    sl.forEach((el,i)=>setTimeout(()=>{el.value=ri(mn,mx);us(el,true)},i*60));
-    setTimeout(()=>{ft.textContent='Nút bắn: '+ri(c.fire[0],c.fire[1]);dt.textContent='DPI: '+ri(c.dpi[0],c.dpi[1]);fl(ft);fl(dt)},sl.length*60+60);
+const ud=()=>{const t2=document.querySelector('.tab.active');dt.hidden=!(t2&&t2.dataset.dpi==='1')};
+const REF={diag:934,dpi:520,gen:185},K=REF.dpi*REF.gen;
+const LV={low:{general:155,redDot:145,x2:135,x4:115,sniper:55,camera:165,fire:65},mid:{general:185,redDot:175,x2:165,x4:145,sniper:85,camera:195,fire:60},high:{general:200,redDot:190,x2:180,x4:160,sniper:105,camera:200,fire:50}};
+const clampI=(v,a,b)=>Math.min(b,Math.max(a,Math.round(v)));
+const snap50=v=>Math.min(3200,Math.max(200,Math.round(v/50)*50));
+const DEV=(()=>{
+    const w=Math.max(screen.width,screen.height),
+          h=Math.min(screen.width,screen.height),
+          dpr=window.devicePixelRatio||1,
+          touch=navigator.maxTouchPoints||0,
+          ua=navigator.userAgent||'',
+          plat=(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'',
+          lang=navigator.language||'',
+          cores=navigator.hardwareConcurrency||0,
+          memory=navigator.deviceMemory||0,
+          timezone=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return''}})();
+    let model='Unknown';
+    const m=ua.match(/Android[^;]*;\s*([^;)]+?)\s*(?:Build|\))/i);
+    if(m){model=m[1].trim().replace(/\s+Build.*$/,'')}
+    else if(/iPad/.test(ua)||(/Macintosh/.test(ua)&&touch>1)){model='iPad'}
+    else if(/iPhone/.test(ua)){model='iPhone'}
+    else if(/Macintosh|Mac OS X/.test(ua)){model='Mac'}
+    else if(/Windows/.test(ua)){model='Windows PC'}
+    else if(/Linux/.test(ua)){model='Linux PC'}
+    const screenStr=w+'x'+h;
+    return{code:model,model,screen:screenStr,dpr,touch,platform:plat,language:lang,cores,memory,timezone,ua,diag:Math.hypot(w,h)};
+})();
+const saveDevice=async()=>{
+    if(!currentUser||isAdmin())return;
+    try{
+        const codeKey=encodeURIComponent(DEV.code).replace(/\./g,'%2E');
+        const userKey=encodeURIComponent(currentUser).replace(/\./g,'%2E');
+        await fbReq('/devices/'+codeKey+'/'+userKey,'PUT',{
+            model:DEV.model,screen:DEV.screen,dpr:DEV.dpr,touch:DEV.touch,
+            platform:DEV.platform,language:DEV.language,cores:DEV.cores,
+            memory:DEV.memory,timezone:DEV.timezone,seen:Date.now()
+        });
+        await patchUser(currentUser,{deviceCode:DEV.code});
+    }catch(e){}
 };
-
+const getCalib=async()=>{try{return(await fbReq('/calib/'+encodeURIComponent(DEV.code)))||{}}catch(e){return{}}};
+const gs=async()=>{
+    const activeTab=pg.querySelector('.preset-btn.active');if(!activeTab)return;
+    const base=LV[activeTab.dataset.level];
+    const hasDpi=document.querySelector('.tab.active').dataset.dpi==='1';
+    const cal=await getCalib();
+    const sf=Math.min(1.1,Math.max(0.9,REF.diag/DEV.diag));
+    const gm=(hasDpi?0.92:1)*(+cal.gen||1)*sf;
+    const rnd=(a,b)=>a+Math.random()*(b-a);
+    const sv=rnd(0.95,1.05);
+    const keys=['general','redDot','x2','x4','sniper','camera'];
+    const results=keys.map(k=>clampI(base[k]*gm*sv*rnd(0.975,1.025),0,200));
+    const fireVal=clampI(base.fire*(DEV.diag/REF.diag)*(+cal.fire||1)*rnd(0.96,1.04),30,100);
+    const dpiVal=snap50(K/(base.general*gm*sv)*(+cal.dpi||1)*rnd(0.985,1.015));
+    sl.forEach((el,i)=>setTimeout(()=>{el.value=results[i];us(el,true);},i*60));
+    setTimeout(()=>{lastFire=fireVal;lastDpi=dpiVal;ftEl.textContent=t('fireBtn')+': '+fireVal;dtEl.textContent=t('dpi')+': '+dpiVal;fl(ftEl);fl(dtEl);},sl.length*60+60);
+};
 sl.forEach(el=>{el.addEventListener('input',()=>us(el,false));us(el,false)});
-document.querySelectorAll('.tabs').forEach(g=>g.addEventListener('click',e=>{
-    const t=e.target.closest('.tab');if(!t)return;
-    g.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));ud();
-}));
-pg.addEventListener('click',e=>{
-    const b=e.target.closest('.preset-btn');if(!b)return;
-    pg.querySelectorAll('.preset-btn').forEach(x=>x.classList.toggle('active',x===b));
-});
-bg.onclick=()=>{gs();bg.classList.add('done');bg.textContent='Đã tạo ✓';clearTimeout(gt);gt=setTimeout(()=>{bg.classList.remove('done');bg.textContent='Tạo độ nhạy'},1200)};
-
-/* ================= TOAST ================= */
-const toast=msg=>{const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200)};
+document.querySelectorAll('.tabs').forEach(g=>g.addEventListener('click',e=>{const t2=e.target.closest('.tab');if(!t2)return;g.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t2));ud();}));
+pg.addEventListener('click',e=>{const b=e.target.closest('.preset-btn');if(!b)return;pg.querySelectorAll('.preset-btn').forEach(x=>x.classList.toggle('active',x===b));});
+bg.onclick=()=>{gs();bg.classList.add('done');bg.textContent=t('generated');clearTimeout(gt);gt=setTimeout(()=>{bg.classList.remove('done');bg.textContent=t('generateSens')},1200)};
+const toast=msg=>{const t2=$('toast');t2.textContent=msg;t2.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t2.classList.remove('show'),2200)};
 const openEmpty=title=>{$('emptyTitle').textContent=title;ev.hidden=false;ev.querySelector('.settings-content').scrollTop=0};
-
-/* ================= NAV ================= */
 $('btnSettings').onclick=e=>{e.stopPropagation();sv.hidden=false;sv.querySelector('.settings-content').scrollTop=0};
 $('btnBack').onclick=e=>{e.stopPropagation();sv.hidden=true};
 $('profileBack').onclick=()=>pv.hidden=true;
@@ -671,292 +1063,111 @@ $('emptyBack').onclick=()=>ev.hidden=true;
 $('linkBack').onclick=()=>linkView.hidden=true;
 $('pwBack').onclick=()=>pwView.hidden=true;
 $('notifBack').onclick=()=>notifView.hidden=true;
-
-sv.addEventListener('click',e=>{
-    const i=e.target.closest('.settings-item');if(!i)return;
-    const a=i.dataset.action;
-    if(a==='account'){pv.hidden=false;pv.querySelector('.settings-content').scrollTop=0}
-    else if(a==='data'){toast('Hoạt động ở phiên bản sau')}
-    else if(a==='language'){lv.hidden=false;lv.querySelector('.settings-content').scrollTop=0}
-    else if(a==='changelog'){toast('Chưa có phiên bản nào gần đây')}
-    else if(a==='terms'){openEmpty('Thỏa thuận dịch vụ')}
-    else if(a==='about'){openEmpty('Giới thiệu về chúng tôi')}
-    else if(a==='download'){openEmpty('Tải app')}
-    else if(a==='help'){openEmpty('Trợ giúp & Góp ý')}
-});
-
-lv.addEventListener('click',e=>{
-    const i=e.target.closest('.lang-item');if(!i)return;
-    lv.querySelectorAll('.lang-item').forEach(x=>x.classList.toggle('active',x===i));
-    localStorage.setItem('zn_lang',i.dataset.lang);
-});
-const l=localStorage.getItem('zn_lang');
-if(l)lv.querySelectorAll('.lang-item').forEach(x=>x.classList.toggle('active',x.dataset.lang===l));
-
-pv.addEventListener('click',e=>{
-    const item=e.target.closest('.settings-item');
-    if(item){
-        const a=item.dataset.action;
-        if(a==='upgrade')toast('Không khả dụng');
-        else if(a==='password'){
-            $('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';
-            pwView.hidden=false;pwView.querySelector('.settings-content').scrollTop=0;
-        }
-        return;
-    }
-    const add=e.target.closest('.profile-add');
-    if(add){
-        linkType=add.dataset.type;
-        $('linkTitle').textContent=linkType==='email'?'Thêm liên kết Email':'Thêm liên kết Số điện thoại';
-        $('linkInput').type=linkType==='email'?'text':'tel';
-        $('linkInput').placeholder=linkType==='email'?'Nhập Email':'Nhập Số điện thoại';
-        $('linkInput').value='';$('linkCode').value='';$('linkGetCode').textContent='Lấy';
-        linkView.hidden=false;linkView.querySelector('.settings-content').scrollTop=0;
-    }
-});
-
-$('linkGetCode').onclick=function(){
-    $('linkCode').value=String(Math.floor(100000+Math.random()*900000));
-    this.textContent='Đã lấy ✓';
-    setTimeout(()=>this.textContent='Lấy',1500);
-};
-$('linkConfirm').onclick=()=>{
-    const val=$('linkInput').value.trim(),code=$('linkCode').value.trim();
-    if(!val)return toast('Vui lòng nhập thông tin');
-    if(!code)return toast('Vui lòng lấy mã xác minh');
-    const addBtn=pv.querySelector(`.profile-add[data-type="${linkType}"]`);
-    if(addBtn){
-        const s2=document.createElement('span');
-        s2.className='profile-value';s2.textContent=val;addBtn.replaceWith(s2);
-    }
-    toast(linkType==='email'?'Đã liên kết Email':'Đã liên kết Số điện thoại');
-    $('linkInput').value='';$('linkCode').value='';
-    setTimeout(()=>linkView.hidden=true,1200);
-};
-
-$('pwConfirmBtn').onclick=async()=>{
-    const cur=$('pwCurrent').value.trim(),nw=$('pwNew').value.trim(),cf=$('pwConfirm').value.trim();
-    if(!cur||!nw||!cf)return toast('Vui lòng nhập đầy đủ thông tin');
-    if(nw!==cf)return toast('Mật khẩu xác minh không khớp');
-    try{
-        const u=await getUser(currentUser);
-        if(!u)return toast('Tài khoản không tồn tại');
-        if(u.password!==cur)return toast('Mật khẩu hiện tại không đúng');
-        await patchUser(currentUser,{password:nw});
-        toast('Mật khẩu của bạn đã được đổi');
-        $('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';
-        setTimeout(()=>pwView.hidden=true,1200);
-    }catch(err){toast('Lỗi kết nối máy chủ');}
-};
-
-const doLogout=()=>{
-    pv.hidden=true;sv.hidden=true;av.hidden=false;av.classList.remove('fade-out');
-    notifView.hidden=true;
-    $('loginPass').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';
-    $('rememberMe').checked=false;
-    sp('login');currentUser='';updateView();
-    localStorage.removeItem('zn_remember');
-};
+$('banBack').onclick=()=>$('banView').hidden=true;
+sv.addEventListener('click',e=>{const i=e.target.closest('.settings-item');if(!i)return;const a=i.dataset.action;if(a==='account'){pv.hidden=false;pv.querySelector('.settings-content').scrollTop=0}else if(a==='data'){toast(t('featureSoon'))}else if(a==='language'){lv.hidden=false;lv.querySelector('.settings-content').scrollTop=0}else if(a==='changelog'){toast(t('noChangelog'))}else if(a==='terms'){openEmpty(t('terms'))}else if(a==='about'){openEmpty(t('aboutUs'))}else if(a==='download'){openEmpty(t('downloadApp'))}else if(a==='help'){openEmpty(t('help'))}});
+lv.addEventListener('click',e=>{const i=e.target.closest('.lang-item');if(!i)return;lv.querySelectorAll('.lang-item').forEach(x=>x.classList.toggle('active',x===i));LANG=i.dataset.lang;idb.set('zn_lang',LANG).catch(()=>{});applyLang();});
+pv.addEventListener('click',e=>{const item=e.target.closest('.settings-item');if(item){const a=item.dataset.action;if(a==='upgrade')toast(t('unavailable'));else if(a==='password'){$('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';pwView.hidden=false;pwView.querySelector('.settings-content').scrollTop=0;}return;}const add=e.target.closest('.profile-add');if(add){linkType=add.dataset.type;$('linkTitle').textContent=linkType==='email'?t('linkEmailTitle'):t('linkPhoneTitle');$('linkInput').type=linkType==='email'?'text':'tel';$('linkInput').placeholder=linkType==='email'?t('inputEmail'):t('inputPhone');$('linkInput').value='';$('linkCode').value='';$('linkGetCode').textContent=t('get');linkView.hidden=false;linkView.querySelector('.settings-content').scrollTop=0;}});
+$('linkGetCode').onclick=function(){$('linkCode').value=String(Math.floor(100000+Math.random()*900000));this.textContent=t('codeTaken');setTimeout(()=>this.textContent=t('get'),1500);};
+$('linkConfirm').onclick=()=>{const val=$('linkInput').value.trim(),code=$('linkCode').value.trim();if(!val)return toast(t('enterInfo'));if(!code)return toast(t('getVerifyCode'));const addBtn=pv.querySelector(`.profile-add[data-type="${linkType}"]`);if(addBtn){const s2=document.createElement('span');s2.className='profile-value';s2.textContent=val;addBtn.replaceWith(s2);}toast(linkType==='email'?t('linkedEmail'):t('linkedPhone'));$('linkInput').value='';$('linkCode').value='';setTimeout(()=>linkView.hidden=true,1200);};
+$('pwConfirmBtn').onclick=async()=>{const cur=$('pwCurrent').value.trim(),nw=$('pwNew').value.trim(),cf=$('pwConfirm').value.trim();if(!cur||!nw||!cf)return toast(t('fillAll'));if(nw!==cf)return toast(t('pwMismatch'));try{const u=await getUser(currentUser);if(!u)return toast(t('userNotExist'));if(u.password!==cur)return toast(t('wrongCurrentPw'));await patchUser(currentUser,{password:nw});toast(t('pwChanged'));$('pwCurrent').value='';$('pwNew').value='';$('pwConfirm').value='';setTimeout(()=>pwView.hidden=true,1200);}catch(err){toast(t('serverError'));}};
+const doLogout=async()=>{pv.hidden=true;sv.hidden=true;av.hidden=false;av.classList.remove('fade-out');notifView.hidden=true;$('loginPass').value='';$('regPass').value='';$('regConfirm').value='';$('regCode').value='';$('rememberMe').checked=false;sp('login');currentUser='';updateView();try{await idb.remove('zn_remember');}catch(e){}};
 $('btnLogout').onclick=doLogout;
-
-const renderUserNotifications=async()=>{
-    const list=$('notifList');
-    try{
-        const notifs=await getAllNotifs();
-        list.innerHTML='';
-        if(!notifs.length){list.innerHTML='<div class="notif-empty">Chưa có thông báo</div>';return}
-        notifs.forEach(n=>{
-            const item=document.createElement('div');
-            item.className='notif-item';
-            item.innerHTML=`
-                <div class="notif-from">${n.from?escapeHtml(n.from):'Hệ thống'}</div>
-                <div class="notif-content">${escapeHtml(n.content)}</div>
-                <div class="notif-meta">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>${fmtDate(n.date)}</span>
-                </div>`;
-            list.appendChild(item);
-        });
-        await Promise.all(notifs.filter(n=>!n.read).map(n=>patchNotif(n.id,{read:true}).catch(()=>{})));
-        updateNotifBadge();
-    }catch(err){list.innerHTML='<div class="notif-empty">Không tải được thông báo</div>';}
-};
-
-$('btnNotif').onclick=async()=>{
-    notifView.hidden=false;
-    notifView.querySelector('.settings-content').scrollTop=0;
-    await renderUserNotifications();
-};
-
-async function renderAdminHome(){
-    try{
-        const [users,notifs,cfg]=await Promise.all([getAllUsers(),getAllNotifs(),getConfig()]);
-        $('adminName').textContent=currentUser;
-        $('statUsers').textContent=Object.keys(users).length;
-        $('statNotifs').textContent=notifs.length;
-        $('statVersion').textContent=cfg.version||'v1.0';
-        $('statStatus').textContent=cfg.maintenance?'Bảo trì':'Hoạt động';
-        $('statStatus').className='stat-value '+(cfg.maintenance?'red':'green');
-    }catch(e){console.error(e)}
-}
-
-const renderAdminUsers=async()=>{
-    const list=$('adminUserList');
-    try{
-        const users=await getAllUsers();
-        list.innerHTML='';
-        const keys=Object.keys(users);
-        if(!keys.length){list.innerHTML='<div class="empty-msg">Chưa có người dùng</div>';return}
-        keys.sort();
-        keys.forEach(name=>{
-            const u=users[name]||{};
-            const isAdm=name===ADMIN_USER;
-            let bC='badge-free',bT='User';
-            if(isAdm){bC='badge-free badge-admin';bT='Admin'}
-            else if(u.banned){bC='badge-free';bT='Banned'}
-            else if(u.type==='vip'){bC='badge-free badge-vip';bT='VIP'}
-            const row=document.createElement('div');
-            row.className='admin-user-row';row.dataset.user=name;
-            row.innerHTML=`
-                <span class="settings-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        ${isAdm?'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>':'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'}
-                    </svg>
-                </span>
-                <span class="admin-user-name">${escapeHtml(name)}</span>
-                <span class="${bC}">${bT}</span>`;
-            list.appendChild(row);
-        });
-    }catch(err){list.innerHTML='<div class="empty-msg">Không tải được danh sách</div>';}
-};
-
-$('adminUserList').addEventListener('click',e=>{
-    const row=e.target.closest('.admin-user-row');if(!row)return;
-    openAdminUserDetail(row.dataset.user);
-});
-
-const openAdminUserDetail=async(name)=>{
-    currentDetailUser=name;
-    await renderAdminUserDetail();
-    $('adminUserDetailView').hidden=false;
-    $('adminUserDetailView').querySelector('.settings-content').scrollTop=0;
-};
-
-const renderAdminUserDetail=async()=>{
-    try{
-        const name=currentDetailUser;
-        const u=await getUser(name)||{};
-        const typeLabel=(name===ADMIN_USER)?'Admin':(u.type==='vip'?'VIP':'Free');
-        $('adminUserDetailInfo').innerHTML=`
-            <div class="detail-row"><span class="detail-label">Tên đăng nhập</span><span class="detail-value">${escapeHtml(name)}</span></div>
-            <div class="detail-row"><span class="detail-label">Mật khẩu hiện tại</span><span class="detail-value mono">${escapeHtml(u.password||'—')}</span></div>
-            <div class="detail-row"><span class="detail-label">Mã kích hoạt</span><span class="detail-value mono">${escapeHtml(u.code||'—')}</span></div>
-            <div class="detail-row"><span class="detail-label">Loại tài khoản</span><span class="detail-value">${typeLabel}${u.banned?' · Bị khóa':''}</span></div>`;
-        const banLabel=$('adminBanLabel');
-        if(banLabel)banLabel.textContent=(name===ADMIN_USER)?'Ban tài khoản':(u.banned?'Bỏ ban tài khoản':'Ban tài khoản');
-    }catch(e){console.error(e)}
-};
-
+const renderUserNotifications=async()=>{const list=$('notifList');try{const notifs=await getAllNotifs();list.innerHTML='';if(!notifs.length){list.innerHTML='<div class="notif-empty">'+t('noNotif')+'</div>';return}notifs.forEach(n=>{const item=document.createElement('div');item.className='notif-item';item.innerHTML=`<div class="notif-from">${n.from?escapeHtml(n.from):t('system')}</div><div class="notif-content">${escapeHtml(n.content)}</div><div class="notif-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>${fmtDate(n.date)}</span></div>`;list.appendChild(item);});await Promise.all(notifs.filter(n=>!n.read).map(n=>patchNotif(n.id,{read:true}).catch(()=>{})));updateNotifBadge();}catch(err){list.innerHTML='<div class="notif-empty">'+t('cantLoadNotif')+'</div>';}};
+$('btnNotif').onclick=async()=>{notifView.hidden=false;notifView.querySelector('.settings-content').scrollTop=0;await renderUserNotifications();};
+async function renderAdminHome(){try{const [users,notifs]=await Promise.all([getAllUsers(),getAllNotifs()]);$('adminName').textContent=currentUser;$('statUsers').textContent=Object.keys(users).length;$('statNotifs').textContent=notifs.length;}catch(e){console.error(e)}}
+const renderAdminUsers=async()=>{const list=$('adminUserList');try{const users=await getAllUsers();list.innerHTML='';const keys=Object.keys(users).filter(n=>n!==ADMIN_USER);if(!keys.length){list.innerHTML='<div class="empty-msg">'+t('noUsers')+'</div>';return}keys.sort();keys.forEach(name=>{const u=users[name]||{};const isAdm=name===ADMIN_USER;let bC='badge-free',bT='User';if(isAdm){bC='badge-free badge-admin';bT='Admin'}else if(u.banned){bC='badge-free';bT='Banned'}else if(u.type==='vip'){bC='badge-free badge-vip';bT='VIP'}const row=document.createElement('div');row.className='admin-user-row';row.dataset.user=name;row.innerHTML=`<span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${isAdm?'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>':'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'}</svg></span><span class="admin-user-name">${escapeHtml(name)}</span><span class="${bC}">${bT}</span>`;list.appendChild(row);});}catch(err){list.innerHTML='<div class="empty-msg">'+t('cantLoadUsers')+'</div>';}};
+$('adminUserList').addEventListener('click',e=>{const row=e.target.closest('.admin-user-row');if(!row)return;openAdminUserDetail(row.dataset.user);});
+const openAdminUserDetail=async(name)=>{currentDetailUser=name;await renderAdminUserDetail();$('adminUserDetailView').hidden=false;$('adminUserDetailView').querySelector('.settings-content').scrollTop=0;};
+const renderAdminUserDetail=async()=>{try{const name=currentDetailUser;const u=await getUser(name)||{};const typeLabel=(name===ADMIN_USER)?'Admin':(u.type==='vip'?'VIP':'Free');$('adminUserDetailInfo').innerHTML=`<div class="detail-row"><span class="detail-label">${t('username')}</span><span class="detail-value">${escapeHtml(name)}</span></div><div class="detail-row"><span class="detail-label">${t('createdDate')}</span><span class="detail-value">${u.created?fmtDate(u.created):'—'}</span></div><div class="detail-row"><span class="detail-label">${t('lastActive')}</span><span class="detail-value">${u.lastActive?fmtDate(u.lastActive):'—'}</span></div><div class="detail-row"><span class="detail-label">${t('password')}</span><span class="detail-value mono">${escapeHtml(u.password||'—')}</span></div><div class="detail-row"><span class="detail-label">${t('activationCode')}</span><span class="detail-value mono">${escapeHtml(u.code||'—')}</span></div><div class="detail-row"><span class="detail-label">${t('deviceCode')}</span><span class="detail-value mono">${escapeHtml(u.deviceCode||'—')}</span></div><div class="detail-row"><span class="detail-label">${t('accountInfo')}</span><span class="detail-value">${typeLabel}${u.banned?' · '+t('banned'):''}</span></div>`;const banLabel=$('adminBanLabel');if(banLabel)banLabel.textContent=(name===ADMIN_USER)?t('banAccount'):(u.banned?t('unbanAccount'):t('banAccount'));}catch(e){console.error(e)}};
 $('adminUserDetailBack').onclick=()=>{$('adminUserDetailView').hidden=true;renderAdminUsers()};
-
-$('adminUserDetailActions').addEventListener('click',async e=>{
-    const btn=e.target.closest('[data-detail-act]');if(!btn)return;
-    const act=btn.dataset.detailAct,name=currentDetailUser;
-    try{
-        if(act==='chpw'){
-            const np=prompt(`Nhập mật khẩu mới cho "${name}":`);
-            if(!np||np.length<4)return toast('Mật khẩu quá ngắn');
-            await patchUser(name,{password:np});
-            await renderAdminUserDetail();
-            toast('Đã đổi mật khẩu');
-        }else if(act==='upgrade'){
-            if(name===ADMIN_USER)return toast('Admin đã là tối cao');
-            const u=await getUser(name)||{};
-            if(u.type==='vip')return toast('Tài khoản đã là VIP');
-            await patchUser(name,{type:'vip'});
-            await renderAdminUserDetail();
-            await renderAdminUsers();
-            toast('Đã nâng tài khoản lên VIP');
-        }else if(act==='ban'){
-            if(name===ADMIN_USER)return toast('Không thể ban Admin');
-            const u=await getUser(name)||{};
-            const nowBanned=!u.banned;
-            await patchUser(name,{banned:nowBanned});
-            await renderAdminUserDetail();
-            await renderAdminUsers();
-            toast(nowBanned?'Đã ban tài khoản':'Đã bỏ ban');
-        }else if(act==='delete'){
-            if(name===ADMIN_USER)return toast('Không thể xóa Admin');
-            if(!confirm(`Xóa tài khoản "${name}"? Hành động không thể hoàn tác!`))return;
-            await deleteUser(name);
-            $('adminUserDetailView').hidden=true;
-            await renderAdminUsers();
-            await renderAdminHome();
-            toast('Đã xóa tài khoản');
-        }
-    }catch(err){toast('Lỗi kết nối máy chủ');}
-});
-
-const renderAdminNotifHistory=async()=>{
-    const list=$('adminNotifHistory');
-    try{
-        const notifs=await getAllNotifs();
-        list.innerHTML='';
-        if(!notifs.length){list.innerHTML='<div class="empty-msg" style="padding:30px 20px">Chưa có thông báo</div>';return}
-        notifs.forEach(n=>{
-            const row=document.createElement('div');
-            row.className='admin-user-row';
-            row.innerHTML=`
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-                    <div style="font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.3px">${n.from?escapeHtml(n.from):'Hệ thống'} · ${fmtDate(n.date)}</div>
-                    <div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(n.content)}</div>
-                </div>
-                <button type="button" class="admin-btn danger" data-nid="${n.id}">Xóa</button>`;
-            list.appendChild(row);
-        });
-    }catch(e){}
-};
-
-$('adminNotifHistory').addEventListener('click',async e=>{
-    const btn=e.target.closest('.admin-btn');if(!btn)return;
-    await deleteNotif(btn.dataset.nid);
-    renderAdminNotifHistory();renderAdminHome();toast('Đã xóa thông báo');
-});
-
-$('adminNotifSend').onclick=async()=>{
-    const from=$('adminNotifFrom').value.trim(),content=$('adminNotifContent').value.trim();
-    if(!content)return toast('Nhập nội dung');
-    await pushNotif({from:from,content:content,date:Date.now(),read:false});
-    $('adminNotifFrom').value='';$('adminNotifContent').value='';
-    renderAdminNotifHistory();renderAdminHome();toast('Đã gửi thông báo');
-};
-
+$('adminUserDetailActions').addEventListener('click',async e=>{const btn=e.target.closest('[data-detail-act]');if(!btn)return;const act=btn.dataset.detailAct,name=currentDetailUser;try{if(act==='chpw'){const np=prompt(t('promptNewPw',{name}));if(!np||np.length<4)return toast(t('pwTooShort'));await patchUser(name,{password:np});await renderAdminUserDetail();toast(t('changedPw'));}else if(act==='upgrade'){if(name===ADMIN_USER)return toast(t('adminSupreme'));const u=await getUser(name)||{};if(u.type==='vip')return toast(t('alreadyVip'));await patchUser(name,{type:'vip'});await renderAdminUserDetail();await renderAdminUsers();toast(t('upgradedVip'));}else if(act==='ban'){if(name===ADMIN_USER)return toast(t('cantBanAdmin'));const u=await getUser(name)||{};if(u.banned){await patchUser(name,{banned:false,banReason:'',banUntil:0,bannedAt:0});await renderAdminUserDetail();await renderAdminUsers();toast(t('unbannedUser'));}else{$('banReason').value='';$('banDuration').value='86400000';$('banView').hidden=false;$('banView').querySelector('.settings-content').scrollTop=0;}}else if(act==='delete'){if(name===ADMIN_USER)return toast(t('cantDeleteAdmin'));if(!confirm(t('confirmDelete',{name})))return;const u=await getUser(name)||{};const usedCode=u.code;await deleteUser(name);const codes=await getAllCodes();const toDelete=new Set();if(usedCode&&codes[usedCode])toDelete.add(usedCode);Object.keys(codes).forEach(code=>{const c=codes[code];if(c&&c.usedBy===name)toDelete.add(code)});await Promise.all([...toDelete].map(code=>deleteCode(code).catch(()=>{})));$('adminUserDetailView').hidden=true;await renderAdminUsers();await renderAdminHome();toast(t('deletedUser'));}}catch(err){toast(t('serverError'));}});
+$('banConfirmBtn').onclick=async()=>{const dur=parseInt($('banDuration').value);const reason=$('banReason').value.trim();if(!reason)return toast('Vui lòng nhập nội dung ban');const name=currentDetailUser;const banUntil=dur===-1?-1:Date.now()+dur;try{await patchUser(name,{banned:true,banReason:reason,banUntil:banUntil,bannedAt:Date.now()});toast(t('bannedUser'));$('banView').hidden=true;await renderAdminUserDetail();await renderAdminUsers();}catch(e){toast(t('serverError'));}};
+const renderAdminNotifHistory=async()=>{const list=$('adminNotifHistory');try{const notifs=await getAllNotifs();list.innerHTML='';if(!notifs.length){list.innerHTML='<div class="empty-msg" style="padding:30px 20px">'+t('noNotif')+'</div>';return}notifs.forEach(n=>{const row=document.createElement('div');row.className='admin-user-row';row.innerHTML=`<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.3px">${n.from?escapeHtml(n.from):t('system')} · ${fmtDate(n.date)}</div><div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(n.content)}</div></div><button type="button" class="admin-btn danger" data-nid="${n.id}">✕</button>`;list.appendChild(row);});}catch(e){}};
+$('adminNotifHistory').addEventListener('click',async e=>{const btn=e.target.closest('.admin-btn');if(!btn)return;await deleteNotif(btn.dataset.nid);renderAdminNotifHistory();renderAdminHome();toast(t('notifDeleted'));});
+$('adminNotifSend').onclick=async()=>{const from=$('adminNotifFrom').value.trim(),content=$('adminNotifContent').value.trim();if(!content)return toast(t('enterContent'));await pushNotif({from:from,content:content,date:Date.now(),read:false});$('adminNotifFrom').value='';$('adminNotifContent').value='';renderAdminNotifHistory();renderAdminHome();toast(t('notifSent'));};
 $('btnAdminUsers').onclick=()=>{renderAdminUsers();$('adminUsersView').hidden=false;$('adminUsersView').querySelector('.settings-content').scrollTop=0};
 $('btnAdminBroadcast').onclick=()=>{$('adminNotifFrom').value='';$('adminNotifContent').value='';renderAdminNotifHistory();$('adminBroadcastView').hidden=false;$('adminBroadcastView').querySelector('.settings-content').scrollTop=0};
 $('adminBroadcastBack').onclick=()=>$('adminBroadcastView').hidden=true;
 $('adminUsersBack').onclick=()=>$('adminUsersView').hidden=true;
 
-// ================= STARTUP =================
-(async function init() {
-    try {
-        // 1. Kiểm tra và tạo tài khoản Admin nếu chưa có
-        await ensureAdmin();
-        
-        // 2. Kiểm tra xem có lưu phiên đăng nhập không
-        await restoreSession();
-        
-        // 3. Ẩn màn hình chờ
-        $('syncOverlay').hidden = true;
-    } catch (err) {
-        // Nếu có lỗi mạng, hiện thông báo
-        $('syncSpinner').style.display = 'none';
-        $('syncText').innerHTML = '<div style="color:#fca5a5;text-align:center;padding:20px">Lỗi kết nối Firebase!<br>Vui lòng kiểm tra lại mạng hoặc Rules.</div>';
+const CODE_CHARS='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const genCodeStr=()=>{let s='';for(let i=0;i<6;i++)s+=CODE_CHARS[Math.floor(Math.random()*CODE_CHARS.length)];return 'ZNEX-'+s;};
+const generateUniqueCode=async()=>{for(let a=0;a<15;a++){const code=genCodeStr();const ex=await getCode(code);if(!ex)return code;}throw new Error('gen failed');};
+const TRASH_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
+const renderAdminCodes=async()=>{const list=$('adminCodeList');try{const codes=await getAllCodes();list.innerHTML='';const keys=Object.keys(codes);if(!keys.length){list.innerHTML='<div class="empty-msg" style="padding:30px 20px">'+t('noCodes')+'</div>';return}keys.sort((a,b)=>(codes[b].created||0)-(codes[a].created||0));keys.forEach(code=>{const c=codes[code]||{};const row=document.createElement('div');row.className='admin-user-row';row.dataset.code=code;const statusCls=c.used?'code-status off':'code-status on';const statusText=c.used?t('codeUsed'):t('codeUnused');row.innerHTML=`<span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg></span><span class="admin-user-name code-mono" data-code="${escapeHtml(code)}">${escapeHtml(code)}</span><span class="${statusCls}">${statusText}</span><button type="button" class="code-del-btn" data-delcode="${escapeHtml(code)}" aria-label="delete">${TRASH_SVG}</button>`;list.appendChild(row);});}catch(err){list.innerHTML='<div class="empty-msg">'+t('serverError')+'</div>';}};
+const renderAdminCodeDetail=async(code)=>{try{const c=await getCode(code)||{};const statusHtml=c.used?`<span style="color:#a1a1aa;font-weight:800">${t('codeUsed')}</span>`:`<span style="color:#22c55e;font-weight:800">${t('codeUnused')}</span>`;$('adminCodeDetailInfo').innerHTML=`<div class="detail-row"><span class="detail-label">${t('codeList')}</span><span class="detail-value mono" data-copy="${escapeHtml(code)}">${escapeHtml(code)}</span></div><div class="detail-row"><span class="detail-label">${t('codeCreated')}</span><span class="detail-value">${c.created?fmtDate(c.created):'—'}</span></div><div class="detail-row"><span class="detail-label">${t('codeUserName')}</span><span class="detail-value">${c.usedBy?escapeHtml(c.usedBy):'—'}</span></div><div class="detail-row"><span class="detail-label">${t('codeUsedAt')}</span><span class="detail-value">${c.usedAt?fmtDate(c.usedAt):'—'}</span></div><div class="detail-row"><span class="detail-label">${t('codeStatus')}</span><span class="detail-value">${statusHtml}</span></div>`;}catch(e){console.error(e)}};
+$('adminCodeDetailInfo').addEventListener('click',async e=>{
+    const el=e.target.closest('[data-copy]');
+    if(!el)return;
+    const code=el.dataset.copy;
+    if(!code||code==='—')return;
+    if(await copyText(code))toast(t('copied')+': '+code);
+});
+$('btnAdminCodes').onclick=()=>{renderAdminCodes();$('adminCodesView').hidden=false;$('adminCodesView').querySelector('.settings-content').scrollTop=0};
+$('adminCodesBack').onclick=()=>$('adminCodesView').hidden=true;
+$('adminCodeDetailBack').onclick=()=>{$('adminCodeDetailView').hidden=true;renderAdminCodes()};
+$('btnGenCode').onclick=async()=>{try{const code=await generateUniqueCode();await saveCode(code,{created:Date.now(),used:false});toast(t('generatedCode')+': '+code);renderAdminCodes();}catch(err){toast(t('createCodeFailed'));}};
+$('adminCodeList').addEventListener('click',async e=>{
+    const delBtn=e.target.closest('.code-del-btn');
+    if(delBtn){
+        e.stopPropagation();
+        const code=delBtn.dataset.delcode;
+        if(!confirm(t('confirmDeleteCode',{code})))return;
+        try{
+            await deleteCode(code);
+            const links=await getLinks();
+            const toDel=Object.keys(links).filter(k=>links[k].code===code);
+            await Promise.all(toDel.map(k=>deleteLink(k).catch(()=>{})));
+            toast(t('deletedCode'));
+            if(currentDetailCode===code){currentDetailCode='';$('adminCodeDetailView').hidden=true;}
+            renderAdminCodes();
+            renderAdminHome();
+        }catch(err){toast(t('serverError'));}
+        return;
     }
+    const copyEl=e.target.closest('.code-mono[data-code]');
+    if(copyEl){
+        const code=copyEl.dataset.code;
+        if(code&&await copyText(code))toast(t('copied')+': '+code);
+        return;
+    }
+    const row=e.target.closest('.admin-user-row');if(!row)return;currentDetailCode=row.dataset.code;renderAdminCodeDetail(currentDetailCode);$('adminCodeDetailView').hidden=false;$('adminCodeDetailView').querySelector('.settings-content').scrollTop=0;
+});
+$('btnDeleteCode').onclick=async()=>{if(!currentDetailCode)return;if(!confirm(t('confirmDeleteCode',{code:currentDetailCode})))return;try{const code=currentDetailCode;await deleteCode(code);const links=await getLinks();const toDel=Object.keys(links).filter(k=>links[k].code===code);await Promise.all(toDel.map(k=>deleteLink(k).catch(()=>{})));toast(t('deletedCode'));$('adminCodeDetailView').hidden=true;currentDetailCode='';renderAdminCodes();renderAdminHome();}catch(e){toast(t('serverError'));}};
+$('profileCode').addEventListener('click',async()=>{const code=$('profileCode').textContent.trim();if(!code||code==='—')return;if(await copyText(code))toast(t('copied')+': '+code);});
+
+const renderAdminGetCodeList=async()=>{const list=$('adminGetCodeList');const sel=$('getCodeSelect');try{const [links,codes]=await Promise.all([getLinks(),getAllCodes()]);
+    sel.innerHTML='<option value="">-- Chọn mã kích hoạt --</option>';
+    Object.keys(codes).forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c+(codes[c].used?' (Đã dùng)':'');sel.appendChild(o);});
     
+    list.innerHTML='';const keys=Object.keys(links);
+    if(!keys.length){list.innerHTML='<div class="empty-msg" style="padding:30px 20px">Chưa có liên kết nào</div>';return}
+    keys.sort((a,b)=>(links[b].created||0)-(links[a].created||0)).forEach(id=>{const l=links[id]||{};const row=document.createElement('div');row.className='link-row';row.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div class="link-url">${escapeHtml(l.url||'')}</div><button type="button" class="code-del-btn" data-dellink="${id}" aria-label="delete">${TRASH_SVG}</button></div><div style="display:flex;justify-content:space-between;align-items:center;"><div class="link-code">${escapeHtml(l.code||'')}</div><div class="link-status ${codes[l.code]?'':'off'}">${codes[l.code]?'✓':'✕'}</div></div>`;list.appendChild(row);});
+}catch(e){console.error(e);list.innerHTML='<div class="empty-msg">Lỗi tải dữ liệu</div>';}};
+$('btnAdminGetCode').onclick=()=>{renderAdminGetCodeList();$('adminGetCodeView').hidden=false;$('adminGetCodeView').querySelector('.settings-content').scrollTop=0;};
+$('adminGetCodeBack').onclick=()=>$('adminGetCodeView').hidden=true;
+$('btnAddGetCode').onclick=async()=>{const url=$('getCodeUrlInput').value.trim(),code=$('getCodeSelect').value;if(!url)return toast('Nhập link');if(!code)return toast('Chọn mã kích hoạt');try{const id='l_'+Date.now();await saveLink(id,{url,code,created:Date.now()});$('getCodeUrlInput').value='';$('getCodeSelect').value='';toast('Đã thêm liên kết');renderAdminGetCodeList();}catch(e){toast('Lỗi thêm liên kết');}};
+$('adminGetCodeList').addEventListener('click',async e=>{const btn=e.target.closest('[data-dellink]');if(!btn)return;const id=btn.dataset.dellink;if(!confirm('Xoá liên kết này?'))return;try{await deleteLink(id);toast('Đã xoá');renderAdminGetCodeList();}catch(err){toast('Lỗi xoá');}});
+
+(async function init(){
+    try{
+        const l=await idb.get('zn_lang').catch(()=>null);
+        if(l&&I18N[l])LANG=l;
+    }catch(e){}
     ud();
+    applyLang();
+    lv.querySelectorAll('.lang-item').forEach(x=>x.classList.toggle('active',x.dataset.lang===LANG));
+    ensureAdmin().catch(err=>console.error(err));
+    let restored=false;
+    try{restored=await restoreSession();}catch(e){console.error(e);}
+    if(!restored){
+        if($('banModal').hidden){
+            currentUser='';av.hidden=false;av.classList.remove('fade-out');
+        }
+    }
+    document.body.classList.remove('loading');
     updateView();
 })();
-
 })();
 </script>
 </body>
